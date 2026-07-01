@@ -44,7 +44,6 @@ class HealthKitManager {
 
 
     func fetchTodayStepCount() async {
-
         let stepType = HKQuantityType(.stepCount)
 
         let now = Date()
@@ -80,9 +79,7 @@ class HealthKitManager {
     }
 
     func fetchTodayEnergyBurned() async {
-
         let energyType = HKQuantityType(.activeEnergyBurned)
-
         let now = Date()
         let startOfDay = Calendar.current.startOfDay(for: now)
 
@@ -119,9 +116,7 @@ class HealthKitManager {
 
 
     func addTodayEnergyBurned(calorie: Double) async {
-
         let energyType = HKQuantityType(.activeEnergyBurned)
-
         let quantity = HKQuantity(
             unit: .kilocalorie(),
             doubleValue: calorie
@@ -148,12 +143,9 @@ class HealthKitManager {
         }
     }
 
-    // MARK: - Observe Step Changes
 
     func startObservingCount() {
-
         let stepType = HKQuantityType(.stepCount)
-
         let observerQuery = HKObserverQuery(
             sampleType: stepType,
             predicate: nil
