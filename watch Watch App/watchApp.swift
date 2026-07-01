@@ -1,14 +1,14 @@
 //
-//  CH4App.swift
-//  CH4
+//  watchApp.swift
+//  watch Watch App
 //
-//  Created by Averina on 26/06/26.
+//  Created by Ni Komang Ayu Juliana on 01/07/26.
 //
 
 import SwiftUI
 
 @main
-struct CH4App: App {
+struct watch_Watch_AppApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
