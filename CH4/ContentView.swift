@@ -27,8 +27,29 @@ struct ContentView: View {
                 Task {
                     print("Uda kepencet")
                     WCSession.default.transferUserInfo([
+                        "type": "start",
                         "seconds": "10",
                         "title": "Ready!"
+                    ])
+                }
+            }
+            
+            Button("1x Loop Haptics"){
+                Task {
+                    print("Uda kepencet Haptics 1")
+                    WCSession.default.transferUserInfo([
+                        "type": "haptics1",
+                        "loops": 1
+                    ])
+                }
+            }
+            
+            Button("2x Loop Haptics"){
+                Task {
+                    print("Uda kepencet Haptics 2")
+                    WCSession.default.transferUserInfo([
+                        "type": "haptics2",
+                        "loops": 2
                     ])
                 }
             }
@@ -36,7 +57,7 @@ struct ContentView: View {
     }
 }
 
-class ConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
+class ConnectivityManager: NSObject, WCSessionDelegate {
     
     static let shared = ConnectivityManager()
     override init() {
