@@ -12,6 +12,8 @@
 		8F2132CB2FF4F6C2005E90B2 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F2132CA2FF4F6C2005E90B2 /* WatchConnectivity.framework */; };
 		8F2132CD2FF4F6C7005E90B2 /* WatchKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F2132CC2FF4F6C7005E90B2 /* WatchKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		8F2132CF2FF4F738005E90B2 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F2132CE2FF4F738005E90B2 /* WatchConnectivity.framework */; };
+		8F2132D72FF54765005E90B2 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F2132D62FF54765005E90B2 /* HealthKit.framework */; };
+		8F2132D92FF54A4E005E90B2 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F2132D82FF54A4E005E90B2 /* HealthKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +46,8 @@
 		8F2132CA2FF4F6C2005E90B2 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS26.5.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
 		8F2132CC2FF4F6C7005E90B2 /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS26.5.sdk/System/Library/Frameworks/WatchKit.framework; sourceTree = DEVELOPER_DIR; };
 		8F2132CE2FF4F738005E90B2 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
+		8F2132D62FF54765005E90B2 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS26.5.sdk/System/Library/Frameworks/HealthKit.framework; sourceTree = DEVELOPER_DIR; };
+		8F2132D82FF54A4E005E90B2 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk/System/Library/Frameworks/HealthKit.framework; sourceTree = DEVELOPER_DIR; };
 		A03501282FEE2EAF008173B7 /* CH4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CH4.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -78,6 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F2132D72FF54765005E90B2 /* HealthKit.framework in Frameworks */,
 				8F2132CD2FF4F6C7005E90B2 /* WatchKit.framework in Frameworks */,
 				8F2132CB2FF4F6C2005E90B2 /* WatchConnectivity.framework in Frameworks */,
 			);
@@ -87,6 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F2132D92FF54A4E005E90B2 /* HealthKit.framework in Frameworks */,
 				8F2132CF2FF4F738005E90B2 /* WatchConnectivity.framework in Frameworks */,
 				8F2132AE2FF4EDBE005E90B2 /* AlarmKit.framework in Frameworks */,
 			);
@@ -98,6 +104,8 @@
 		8F2132AB2FF4EDB9005E90B2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8F2132D62FF54765005E90B2 /* HealthKit.framework */,
+				8F2132D82FF54A4E005E90B2 /* HealthKit.framework */,
 				8F2132CE2FF4F738005E90B2 /* WatchConnectivity.framework */,
 				8F2132CC2FF4F6C7005E90B2 /* WatchKit.framework */,
 				8F2132CA2FF4F6C2005E90B2 /* WatchConnectivity.framework */,
@@ -260,6 +268,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "CH4Watch Watch App/CH4Watch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "CH4Watch\\ Watch\\ App/alarm.caf";
@@ -267,6 +276,10 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "CH4Watch-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = CH4Watch;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "woi pls";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app reads your step count data to display daily activity.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "pls mau update";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.yimei.watch;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
@@ -295,6 +308,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "CH4Watch Watch App/CH4Watch Watch App.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "CH4Watch\\ Watch\\ App/alarm.caf";
@@ -302,6 +316,10 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "CH4Watch-Watch-App-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = CH4Watch;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "woi pls";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app reads your step count data to display daily activity.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "pls mau update";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.yimei.watch;
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
@@ -451,6 +469,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CH4/CH4.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
@@ -461,6 +480,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CH4/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app reads your step count data to display daily activity.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "pls mau update";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -500,6 +521,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = CH4/CH4.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
@@ -510,6 +532,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = CH4/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app reads your step count data to display daily activity.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "pls mau update";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
