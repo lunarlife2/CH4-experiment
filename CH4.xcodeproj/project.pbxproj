@@ -6,33 +6,112 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		8F21329A2FF39834005E90B2 /* CH4Watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 8F2132902FF39833005E90B2 /* CH4Watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8F2132AE2FF4EDBE005E90B2 /* AlarmKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F2132AC2FF4EDB9005E90B2 /* AlarmKit.framework */; platformFilter = ios; };
+		8F2132CB2FF4F6C2005E90B2 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F2132CA2FF4F6C2005E90B2 /* WatchConnectivity.framework */; };
+		8F2132CD2FF4F6C7005E90B2 /* WatchKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F2132CC2FF4F6C7005E90B2 /* WatchKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		8F2132CF2FF4F738005E90B2 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F2132CE2FF4F738005E90B2 /* WatchConnectivity.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8F2132982FF39834005E90B2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A03501202FEE2EAF008173B7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8F21328F2FF39833005E90B2;
+			remoteInfo = "CH4Watch Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8F21329E2FF39834005E90B2 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				8F21329A2FF39834005E90B2 /* CH4Watch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		8F2132902FF39833005E90B2 /* CH4Watch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CH4Watch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F2132AC2FF4EDB9005E90B2 /* AlarmKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AlarmKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk/System/Library/Frameworks/AlarmKit.framework; sourceTree = DEVELOPER_DIR; };
+		8F2132CA2FF4F6C2005E90B2 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS26.5.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
+		8F2132CC2FF4F6C7005E90B2 /* WatchKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchKit.framework; path = Platforms/WatchOS.platform/Developer/SDKs/WatchOS26.5.sdk/System/Library/Frameworks/WatchKit.framework; sourceTree = DEVELOPER_DIR; };
+		8F2132CE2FF4F738005E90B2 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
 		A03501282FEE2EAF008173B7 /* CH4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CH4.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8F21328B2FF397DC005E90B2 /* Exceptions for "CH4" folder in "CH4" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = A03501272FEE2EAF008173B7 /* CH4 */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		8F2132912FF39833005E90B2 /* CH4Watch Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "CH4Watch Watch App";
+			sourceTree = "<group>";
+		};
 		A035012A2FEE2EAF008173B7 /* CH4 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8F21328B2FF397DC005E90B2 /* Exceptions for "CH4" folder in "CH4" target */,
+			);
 			path = CH4;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		8F21328D2FF39833005E90B2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8F2132CD2FF4F6C7005E90B2 /* WatchKit.framework in Frameworks */,
+				8F2132CB2FF4F6C2005E90B2 /* WatchConnectivity.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A03501252FEE2EAF008173B7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8F2132CF2FF4F738005E90B2 /* WatchConnectivity.framework in Frameworks */,
+				8F2132AE2FF4EDBE005E90B2 /* AlarmKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8F2132AB2FF4EDB9005E90B2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8F2132CE2FF4F738005E90B2 /* WatchConnectivity.framework */,
+				8F2132CC2FF4F6C7005E90B2 /* WatchKit.framework */,
+				8F2132CA2FF4F6C2005E90B2 /* WatchConnectivity.framework */,
+				8F2132AC2FF4EDB9005E90B2 /* AlarmKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		A035011F2FEE2EAF008173B7 = {
 			isa = PBXGroup;
 			children = (
 				A035012A2FEE2EAF008173B7 /* CH4 */,
+				8F2132912FF39833005E90B2 /* CH4Watch Watch App */,
+				8F2132AB2FF4EDB9005E90B2 /* Frameworks */,
 				A03501292FEE2EAF008173B7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				A03501282FEE2EAF008173B7 /* CH4.app */,
+				8F2132902FF39833005E90B2 /* CH4Watch Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +128,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		8F21328F2FF39833005E90B2 /* CH4Watch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8F21329B2FF39834005E90B2 /* Build configuration list for PBXNativeTarget "CH4Watch Watch App" */;
+			buildPhases = (
+				8F21328C2FF39833005E90B2 /* Sources */,
+				8F21328D2FF39833005E90B2 /* Frameworks */,
+				8F21328E2FF39833005E90B2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8F2132912FF39833005E90B2 /* CH4Watch Watch App */,
+			);
+			name = "CH4Watch Watch App";
+			packageProductDependencies = (
+			);
+			productName = "CH4Watch Watch App";
+			productReference = 8F2132902FF39833005E90B2 /* CH4Watch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
 		A03501272FEE2EAF008173B7 /* CH4 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A03501332FEE2EB0008173B7 /* Build configuration list for PBXNativeTarget "CH4" */;
@@ -55,10 +157,12 @@
 				A03501242FEE2EAF008173B7 /* Sources */,
 				A03501252FEE2EAF008173B7 /* Frameworks */,
 				A03501262FEE2EAF008173B7 /* Resources */,
+				8F21329E2FF39834005E90B2 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				8F2132992FF39834005E90B2 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				A035012A2FEE2EAF008173B7 /* CH4 */,
@@ -77,9 +181,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2650;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 2650;
 				TargetAttributes = {
+					8F21328F2FF39833005E90B2 = {
+						CreatedOnToolsVersion = 26.6;
+					};
 					A03501272FEE2EAF008173B7 = {
 						CreatedOnToolsVersion = 26.5;
 					};
@@ -100,11 +207,19 @@
 			projectRoot = "";
 			targets = (
 				A03501272FEE2EAF008173B7 /* CH4 */,
+				8F21328F2FF39833005E90B2 /* CH4Watch Watch App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		8F21328E2FF39833005E90B2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A03501262FEE2EAF008173B7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +230,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		8F21328C2FF39833005E90B2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A03501242FEE2EAF008173B7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,7 +246,88 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		8F2132992FF39834005E90B2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8F21328F2FF39833005E90B2 /* CH4Watch Watch App */;
+			targetProxy = 8F2132982FF39834005E90B2 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		8F21329C2FF39834005E90B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "CH4Watch\\ Watch\\ App/alarm.caf";
+				DEVELOPMENT_TEAM = HJAN6GQWZK;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "CH4Watch-Watch-App-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = CH4Watch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.yimei.watch;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yimei.watch.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Debug;
+		};
+		8F21329D2FF39834005E90B2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "CH4Watch\\ Watch\\ App/alarm.caf";
+				DEVELOPMENT_TEAM = HJAN6GQWZK;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "CH4Watch-Watch-App-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = CH4Watch;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.yimei.watch;
+				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yimei.watch.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 26.5;
+			};
+			name = Release;
+		};
 		A03501312FEE2EB0008173B7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -246,10 +449,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = CH4/alarm.caf;
+				DEVELOPMENT_TEAM = HJAN6GQWZK;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CH4/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -265,7 +472,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.averina.CH4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yimei.watch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -288,10 +495,14 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = CH4/alarm.caf;
+				DEVELOPMENT_TEAM = HJAN6GQWZK;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = CH4/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -307,7 +518,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.averina.CH4;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yimei.watch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -326,6 +537,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		8F21329B2FF39834005E90B2 /* Build configuration list for PBXNativeTarget "CH4Watch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F21329C2FF39834005E90B2 /* Debug */,
+				8F21329D2FF39834005E90B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A03501232FEE2EAF008173B7 /* Build configuration list for PBXProject "CH4" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

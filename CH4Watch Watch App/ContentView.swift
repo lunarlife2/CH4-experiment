@@ -10,28 +10,17 @@ import WatchConnectivity
 import UserNotifications
 
 struct ContentView: View {
-    init(){
-        _ = ConnectivityManager.shared
-    }
     
+    @StateObject private var shared = ConnectivityManager()
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, Ayuk!")
+            Text("Seconds: " + shared.receivedUserInfo)
+                .padding()
+                .bold()
         }
         .padding()
-        .task {
-            await NotificationManager.shared.requestPermission()
-        }
     }
-    
-    
-    
 }
-
-
 
 #Preview {
     ContentView()
