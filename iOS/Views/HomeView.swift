@@ -18,7 +18,7 @@ struct HomeView: View {
             Button("Schedule 10 seconds Alarm") {
                 print("Uda kepencet")
                 WCSession.default.transferUserInfo([
-                    "seconds": 10,
+                    "seconds": "10",
                     "title": "Ready!"
                 ])
             }

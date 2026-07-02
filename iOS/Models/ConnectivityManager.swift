@@ -23,6 +23,12 @@ class ConnectivityManager: NSObject, WCSessionDelegate{
     
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
         print("Connecting To WatchOS Success")
+        print("Activated:", activationState == .activated)
+        print("Paired:", session.isPaired)
+        print("Installed:", session.isWatchAppInstalled)
+        print("Reachable:", session.isReachable)
+        print("Error:", error as Any)
+        
     }
     
 #if os(iOS)

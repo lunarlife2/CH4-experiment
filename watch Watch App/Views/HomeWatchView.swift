@@ -9,13 +9,12 @@ import SwiftUI
 
 struct HomeWatchView: View {
     
-    init(){
-        _ = ConnectivityManager.shared
-    }
+    @StateObject private var connectivity = ConnectivityManager.shared
     
     var body: some View {
         VStack {
-            Text("Seconds: " + )
+            Text("Seconds: " + connectivity.receivedUserInfo)
+                .bold()
         }
     }
 }

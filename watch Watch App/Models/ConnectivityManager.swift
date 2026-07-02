@@ -7,6 +7,7 @@
 
 import Foundation
 import WatchConnectivity
+import WatchKit
 import Combine
 import AVFoundation
 
@@ -35,6 +36,8 @@ class ConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
     
     func session(_ session: WCSession, didReceiveUserInfo userInfo: [String : Any] = [:]) {
         WKInterfaceDevice.current().play(.notification)
+        
+        print("Received:", userInfo)
         
         DispatchQueue.main.async {
             if let dataText = userInfo["seconds"] as? String {
