@@ -20,7 +20,7 @@ struct HomeView: View {
                 print("Uda kepencet")
                 WCSession.default.transferUserInfo([
                     "seconds": "10",
-                    "title": "Ready!"
+                    "title": "Ready!!!!!"
                 ])
             }
         }
