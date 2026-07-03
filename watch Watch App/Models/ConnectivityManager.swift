@@ -9,11 +9,13 @@ import Foundation
 import WatchConnectivity
 import WatchKit
 import Combine
+import Observation
 import AVFoundation
 
-class ConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
+@Observable
+class ConnectivityManager: NSObject, WCSessionDelegate {
     
-    @Published var receivedUserInfo: String = "0"
+    var receivedUserInfo: String = "0"
     static let shared = ConnectivityManager()
     private let synthesizer = AVSpeechSynthesizer()
     
@@ -69,6 +71,19 @@ class ConnectivityManager: NSObject, WCSessionDelegate, ObservableObject {
     
     func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
         print("Connecting From iOS Success")
+    }
+    
+    func sendHeartRate(_ bpm: Double) {
+        let session = WCSession.default
+        guard session.activationState == .activated else {return}
+        
+        session.sendMessage(
+            ["heartRate" : bpm],
+            replyHandler: nil,
+            errorHandler: { error in
+               print(error)
+            }
+        )
     }
     
 }

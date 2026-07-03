@@ -10,11 +10,12 @@ import WatchConnectivity
 
 
 struct HomeView: View {
-    init(){
-        _ = ConnectivityManager.shared
-    }
+    @State private var connectivity = ConnectivityManager.shared
+    
     var body: some View {
         VStack {
+            Text("\(connectivity.heartRate) BPM")
+            
             Button("Schedule 10 seconds Alarm") {
                 print("Uda kepencet")
                 WCSession.default.transferUserInfo([
