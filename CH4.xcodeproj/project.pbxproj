@@ -10,6 +10,8 @@
 		1F150E592FF53A7100280870 /* watch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 1F150E4F2FF53A7000280870 /* watch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8F96E16F2FF65A6B007CBC02 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F96E16E2FF65A6B007CBC02 /* WatchConnectivity.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		8F96E1712FF65A74007CBC02 /* WatchConnectivity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F96E1702FF65A74007CBC02 /* WatchConnectivity.framework */; };
+		A03B38B32FFCC36B00E01D39 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A03B38B22FFCC36B00E01D39 /* Config.xcconfig */; };
+		A03B38B42FFCC36B00E01D39 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A03B38B22FFCC36B00E01D39 /* Config.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +44,7 @@
 		8F96E1702FF65A74007CBC02 /* WatchConnectivity.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WatchConnectivity.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.5.sdk/System/Library/Frameworks/WatchConnectivity.framework; sourceTree = DEVELOPER_DIR; };
 		8F96E1772FF660F0007CBC02 /* CH4.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CH4.entitlements; sourceTree = "<group>"; };
 		A03501282FEE2EAF008173B7 /* CH4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CH4.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A03B38B22FFCC36B00E01D39 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -89,6 +92,7 @@
 		A035011F2FEE2EAF008173B7 = {
 			isa = PBXGroup;
 			children = (
+				A03B38B22FFCC36B00E01D39 /* Config.xcconfig */,
 				8F96E1772FF660F0007CBC02 /* CH4.entitlements */,
 				A035012A2FEE2EAF008173B7 /* iOS */,
 				1F150E502FF53A7000280870 /* watch Watch App */,
@@ -198,6 +202,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A03B38B42FFCC36B00E01D39 /* Config.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,6 +210,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A03B38B32FFCC36B00E01D39 /* Config.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,6 +244,7 @@
 /* Begin XCBuildConfiguration section */
 		1F150E5B2FF53A7100280870 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A03B38B22FFCC36B00E01D39 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -275,6 +282,7 @@
 		};
 		1F150E5C2FF53A7100280870 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A03B38B22FFCC36B00E01D39 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -313,6 +321,7 @@
 		};
 		A03501312FEE2EB0008173B7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A03B38B22FFCC36B00E01D39 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -374,6 +383,7 @@
 		};
 		A03501322FEE2EB0008173B7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A03B38B22FFCC36B00E01D39 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -427,6 +437,7 @@
 		};
 		A03501342FEE2EB0008173B7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A03B38B22FFCC36B00E01D39 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -455,7 +466,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.htlteam;
+				PRODUCT_BUNDLE_IDENTIFIER = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -476,6 +487,7 @@
 		};
 		A03501352FEE2EB0008173B7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A03B38B22FFCC36B00E01D39 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -504,7 +516,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.htlteam;
+				PRODUCT_BUNDLE_IDENTIFIER = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
