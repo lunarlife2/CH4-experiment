@@ -16,23 +16,28 @@ struct RootView: View {
                 .tabItem {
                     Image(systemName: "house.fill")
                     Text("Home")
+                    
                 }
-
+            
             RunView()
                 .tabItem {
                     Image(systemName: "figure.run")
                     Text("Run")
                 }
-
+            
             ProfileView()
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("Profile")
                 }
+                .toolbarBackground(.green, for: .tabBar)
         }
-        .tint(Color(hex: "C35A1D")) //
+        .tint(Color(hex: "C35A1D"))
     }
+    
+    
 }
+    
 
 #Preview {
     RootView()

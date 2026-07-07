@@ -21,7 +21,7 @@ struct HomeView: View {
                                 .resizable()
                                 .frame(width: 90, height: 90)
                                 .clipShape(RoundedRectangle(cornerRadius: 15))
-                                .padding(.top, 70)
+//                                .padding(.top, 70)
                         }
                         
                         Text("Ayu Yimie")
@@ -55,27 +55,16 @@ struct HomeView: View {
                 
                 WatchConnectedBadge(isConnected: connectivity.isReachable)
                 
-                //weekly chart
-                WeeklyActivityChart(data: healthManager.weeklyActivity)
-                
-                HStack(alignment: .top, spacing: 10) {
-                    RunSummary(summary: healthManager.weeklySummary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    SessionDetailLog(sessions: healthManager.sessionLog)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding()
-                .preferredColorScheme(.dark)
-                .onAppear {
-                    healthManager.requestAuthorization()
-                    
-                }
-            } .padding(20)
+            }
+            .padding(.horizontal, 20)
+            .preferredColorScheme(.dark)
+            .onAppear {
+                healthManager.requestAuthorization()
+            }
+            
         }
     }
 }
-
 #Preview {
     HomeView()
 }
