@@ -1,0 +1,12 @@
+//
+//  Config.xcconfig
+//  CH4
+//
+//  Created by Averina on 07/07/26.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
+
+PRODUCT_BUNDLE_IDENTIFIER = com.hlteam.ranup
+
