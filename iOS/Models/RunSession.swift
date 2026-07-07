@@ -11,6 +11,7 @@ struct RunSession: Identifiable {
     let id = UUID()
     let date: Date
     let distanceKm: Double
-    let paceFormatted: String // "5:28 /KM"
+    
+    
 }
 

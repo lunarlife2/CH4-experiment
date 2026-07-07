@@ -14,19 +14,18 @@ struct StatCard: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .foregroundColor(.white)
-                .font(.system(size: 20, weight: .semibold))
-            
             HStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.system(size: 28))
+                    .font(.system(size: 25))
                     .foregroundColor(.orange)
                 
                 Text(value)
-                    .font(.system(size: 30, weight: .bold))
+                    .font(.system(size: 28, weight: .bold))
                     .foregroundColor(.white)
             }
+            Text(title)
+                .foregroundColor(.white)
+                .font(.system(size: 20, weight: .semibold))
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)

@@ -19,9 +19,8 @@ class HealthKitManager{
     var avgHeartRate: Double = 0
     var avgPace: Double = 0
     var avgPaceFormatted: String = "00:00"
-    var weeklyActivity: [DailyActivity] = []
-    var weeklySummary = WeeklySummary()
-    var sessionLog: [RunSession] = []
+    var totalDistanceKm: Double = 0
+    var totalTimeFormatted: String = "0h 0m"
     
     func requestAuthorization() {
         guard HKHealthStore.isHealthDataAvailable() else { return }
@@ -37,10 +36,7 @@ class HealthKitManager{
             if success {
                 self.fetchTodayCalories()
                 self.fetchAverageHeartRate()
-                self.fetchTodayPace()
-                self.fetchWeeklyActivity()
-                self.fetchWeeklySummary()
-                self.fetchSessionLog()
+                self.fetchTodayWorkoutStats()
             }
         }
     }
@@ -77,7 +73,7 @@ class HealthKitManager{
     }
     
     
-    func fetchTodayPace() {
+    func fetchTodayWorkoutStats() {
         let workoutType = HKObjectType.workoutType()
         let predicate = HKQuery.predicateForSamples(
             withStart: Calendar.current.startOfDay(for: Date()),
@@ -94,6 +90,8 @@ class HealthKitManager{
                 DispatchQueue.main.async {
                     self?.avgPace = 0
                     self?.avgPaceFormatted = "00:00"
+                    self?.totalDistanceKm = 0
+                    self?.totalTimeFormatted = "0h 0m"
                 }
                 return
             }
@@ -130,6 +128,12 @@ class HealthKitManager{
         self.avgPaceFormatted = formatPace(pace)
     }
     
+    func formatDuration(minutes totalMinutes: Double) -> String {
+        let hours = Int(totalMinutes) / 60
+        let minutes = Int(totalMinutes) % 60
+        return "\(hours)h \(minutes)m"
+    }
+    
     
     // Convert pace from 5.5 minute/km to "05:30"
     func formatPace(_ pace: Double) -> String {
@@ -139,158 +143,4 @@ class HealthKitManager{
     }
     
     
-    func fetchWeeklyActivity() {
-        let calendar = Calendar.current
-        let now = Date()
-        
-        guard let startDate = calendar.date(byAdding: .day, value: -6, to: calendar.startOfDay(for: now)) else { return }
-        
-        let type = HKQuantityType(.distanceWalkingRunning)
-        
-        var interval = DateComponents()
-        interval.day = 1
-        
-        let query = HKStatisticsCollectionQuery(
-            quantityType: type,
-            quantitySamplePredicate: nil,
-            options: .cumulativeSum,
-            anchorDate: calendar.startOfDay(for: startDate),
-            intervalComponents: interval
-        )
-        
-        query.initialResultsHandler = { [weak self] _, results, error in
-            guard let results = results else { return }
-            
-            var dailyData: [DailyActivity] = []
-            let dayFormatter = DateFormatter()
-            dayFormatter.dateFormat = "E" // "Sun", "Mon", etc
-            
-            results.enumerateStatistics(from: startDate, to: now) { statistics, _ in
-                let distanceKm = statistics.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)) ?? 0
-                let dayLabel = dayFormatter.string(from: statistics.startDate)
-                let score = distanceKm * 10
-                
-                dailyData.append(
-                    DailyActivity(
-                        day: dayLabel,
-                        date: statistics.startDate,
-                        indoorScore: score * 0.4,   // example split indoor/outdoor
-                        outdoorScore: score * 0.6
-                    )
-                )
-            }
-            
-            DispatchQueue.main.async {
-                self?.weeklyActivity = dailyData
-            }
-        }
-        
-        healthStore.execute(query)
-    }
-    
-    func fetchWeeklySummary() {
-        let calendar = Calendar.current
-        let now = Date()
-        guard let startOfWeek = calendar.date(byAdding: .day, value: -6, to: calendar.startOfDay(for: now)) else { return }
-        
-        let workoutType = HKObjectType.workoutType()
-        let predicate = HKQuery.predicateForSamples(withStart: startOfWeek, end: now)
-        
-        let query = HKSampleQuery(
-            sampleType: workoutType,
-            predicate: predicate,
-            limit: HKObjectQueryNoLimit,
-            sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]
-        ) { [weak self] _, samples, error in
-            guard let workouts = samples as? [HKWorkout] else { return }
-            
-            var totalDistance: Double = 0
-            var totalDurationMinutes: Double = 0
-            
-            for workout in workouts {
-                totalDurationMinutes += workout.duration / 60
-                if let distance = workout.totalDistance {
-                    totalDistance += distance.doubleValue(for: .meterUnit(with: .kilo))
-                }
-            }
-            
-            let avgPace = totalDistance > 0 ? totalDurationMinutes / totalDistance : 0
-            let hours = Int(totalDurationMinutes) / 60
-            let minutes = Int(totalDurationMinutes) % 60
-            
-            // this week vs past week for "Weekly Trend"
-            self?.calculateWeeklyTrend(currentDistance: totalDistance, referenceDate: startOfWeek) { trend in
-                DispatchQueue.main.async {
-                    self?.weeklySummary = WeeklySummary(
-                        totalDistanceKm: totalDistance,
-                        avgPaceFormatted: self?.formatPace(avgPace) ?? "00:00",
-                        totalHours: hours,
-                        totalMinutes: minutes,
-                        weeklyTrend: trend
-                    )
-                }
-            }
-        }
-        
-        healthStore.execute(query)
-    }
-    
-    
-    func calculateWeeklyTrend(currentDistance: Double, referenceDate: Date, completion: @escaping (String) -> Void) {
-        let calendar = Calendar.current
-        guard let lastWeekStart = calendar.date(byAdding: .day, value: -7, to: referenceDate),
-              let lastWeekEnd = calendar.date(byAdding: .day, value: -1, to: referenceDate) else {
-            completion("Stable")
-            return
-        }
-        
-        let predicate = HKQuery.predicateForSamples(withStart: lastWeekStart, end: lastWeekEnd)
-        let query = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, _ in
-            let lastWeekDistance = (samples as? [HKWorkout])?.reduce(0.0) { sum, workout in
-                sum + (workout.totalDistance?.doubleValue(for: .meterUnit(with: .kilo)) ?? 0)
-            } ?? 0
-            
-            let trend = currentDistance > lastWeekDistance ? "Increasing" :
-                        currentDistance < lastWeekDistance ? "Decreasing" : "Stable"
-            completion(trend)
-        }
-        healthStore.execute(query)
-    }
-
-    
-    func fetchSessionLog() {
-        let calendar = Calendar.current
-        let now = Date()
-        guard let startOfWeek = calendar.date(byAdding: .day, value: -6, to: calendar.startOfDay(for: now)) else { return }
-        
-        let predicate = HKQuery.predicateForSamples(withStart: startOfWeek, end: now)
-        let query = HKSampleQuery(
-            sampleType: .workoutType(),
-            predicate: predicate,
-            limit: HKObjectQueryNoLimit,
-            sortDescriptors: [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]
-        ) { [weak self] _, samples, error in
-            guard let workouts = samples as? [HKWorkout] else { return }
-            
-            let sessions = workouts.compactMap { workout -> RunSession? in
-                let distanceKm = workout.totalDistance?.doubleValue(for: .meterUnit(with: .kilo)) ?? 0
-                guard distanceKm > 0 else { return nil }
-                
-                let durationMinutes = workout.duration / 60
-                let pace = durationMinutes / distanceKm
-                
-                return RunSession(
-                    date: workout.startDate,
-                    distanceKm: distanceKm,
-                    paceFormatted: "\(self?.formatPace(pace) ?? "00:00") /KM"
-                )
-            }
-            
-            DispatchQueue.main.async {
-                self?.sessionLog = sessions
-            }
-        }
-        
-        healthStore.execute(query)
-    }
 }
