@@ -57,7 +57,7 @@ struct HomeView: View {
             .padding(.horizontal, 20)
             .preferredColorScheme(.dark)
             .onAppear {
-                healthManager.requestAuthorization()
+//                healthManager.requestAuthorization()
             }
             
         }

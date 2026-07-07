@@ -37,6 +37,7 @@ class HealthKitManager{
                 self.fetchTodayCalories()
                 self.fetchAverageHeartRate()
                 self.fetchTodayWorkoutStats()
+                
             }
         }
     }

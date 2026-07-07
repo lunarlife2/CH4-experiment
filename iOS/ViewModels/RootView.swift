@@ -29,10 +29,10 @@ struct RootView: View {
                 .tabItem {
                     Image(systemName: "person.fill")
                     Text("Profile")
-                }
+                                }
                 .toolbarBackground(.green, for: .tabBar)
         }
-        .tint(Color(hex: "C35A1D"))
+        .tint(Color.secondaryNormal)
     }
     
     

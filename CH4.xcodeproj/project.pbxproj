@@ -56,6 +56,11 @@
 			path = "watch Watch App";
 			sourceTree = "<group>";
 		};
+		1FA451F52FFD28AD00136A6C /* Resources */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		A035012A2FEE2EAF008173B7 /* iOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = iOS;
@@ -95,6 +100,7 @@
 		A035011F2FEE2EAF008173B7 = {
 			isa = PBXGroup;
 			children = (
+				1FA451F52FFD28AD00136A6C /* Resources */,
 				A03B3B282FFCE33A00E01D39 /* Watch.xcconfig */,
 				A03B3B252FFCE2FE00E01D39 /* Config.xcconfig */,
 				8F96E1772FF660F0007CBC02 /* CH4.entitlements */,
@@ -131,6 +137,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				1F150E502FF53A7000280870 /* watch Watch App */,
+				1FA451F52FFD28AD00136A6C /* Resources */,
 			);
 			name = "watch Watch App";
 			packageProductDependencies = (
@@ -154,6 +161,7 @@
 				1F64A9262FF54E2900170E4A /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				1FA451F52FFD28AD00136A6C /* Resources */,
 				A035012A2FEE2EAF008173B7 /* iOS */,
 			);
 			name = CH4;
@@ -386,6 +394,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -440,6 +449,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
 			name = Release;
 		};
