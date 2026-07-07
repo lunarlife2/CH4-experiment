@@ -12,7 +12,7 @@ struct RunningZone: Identifiable {
     let zone: Int
     let minPercentageHR: Double
     let maxPercentageHR: Double
-    
+    let color: String
 //    let age: Int
 //    let minBPMRun: Int
 //    let maxBPMRun: Int

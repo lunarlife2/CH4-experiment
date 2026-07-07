@@ -15,18 +15,21 @@ struct HomeWatchView: View {
     
     var body: some View {
         VStack {
-            Text("Seconds: " + connectivity.receivedUserInfo)
-                .bold()
             
-            Text("\(Int(healthMonitor.heartRate)) BPM")
+            TabPagingView(running: RunningType(name: "Outdoor Run", icon: "figure.run", activity: .running, location: .outdoor))
             
-            Button("Start"){
-                Task {
-                    await healthMonitor.detectHeartRate(
-                        activityType: .running,
-                        locationType: .indoor)
-                }
-            }
+//            Text("Seconds: " + connectivity.receivedUserInfo)
+//                .bold()
+//            
+//            Text("\(Int(healthMonitor.heartRate)) BPM")
+//            
+//            Button("Start"){
+//                Task {
+//                    await healthMonitor.detectHeartRate(
+//                        activityType: .running,
+//                        locationType: .indoor)
+//                }
+//            }
         }
         .task{
             await healthMonitor.requestAuthorization()

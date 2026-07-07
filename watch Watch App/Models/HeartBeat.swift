@@ -6,3 +6,9 @@
 //
 
 import Foundation
+import SwiftUI
+
+struct HeartBeat {
+    let color: String
+    
+}

@@ -9,7 +9,22 @@ import SwiftUI
 
 struct HeartBeatView: View {
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationStack {
+            VStack {
+                PrimaryHeartPulse()
+                            
+                HStack (spacing: 50){
+                    Text("Zone 3")
+                    Text("0:46:29")
+                }
+                .padding()
+                
+                Text("SLOW DOWN")
+                    .bold()
+                    .foregroundStyle(Color.red)
+                    .padding(.bottom, 20)
+            }
+        }
     }
 }
 
