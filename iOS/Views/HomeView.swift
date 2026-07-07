@@ -10,19 +10,18 @@ struct HomeView: View {
     var body: some View {
         ScrollView{
             VStack (alignment: .leading, spacing: 20){
-                HStack {
-                    Text("Home")
-                        .font(.system(size: 48, weight: .semibold))
+                HStack  {
+                    Text("Activity Log")
+                        .font(.system(size: 40, weight: .semibold))
                         .foregroundColor(.white)
                     Spacer()
                     VStack {
-                        if let uiImage = UIImage(named: "profile") {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .frame(width: 90, height: 90)
-                                .clipShape(RoundedRectangle(cornerRadius: 15))
-                                .padding(.top, 70)
-                        }
+                        Image("profile")
+                            .resizable()
+                            .frame(width: 90, height: 90)
+                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                            .padding(.top,40)
+
                         
                         Text("Ayu Yimie")
                             .font(.system(size: 24, weight: .semibold))
@@ -31,10 +30,7 @@ struct HomeView: View {
                     .padding(.horizontal, 2)
                     
                 }
-                
-                Text("Activity")
-                    .font(.system(size: 28, weight: .semibold))
-                    .foregroundColor(.white)
+                .padding(.vertical, 10)
                 
                 LazyVGrid(
                     columns: [
@@ -49,33 +45,24 @@ struct HomeView: View {
                     ActivityCard(icon: "heart", title: "Zone", isTappable: true) {
                         print("Zone tapped")
                     }
+                    StatCard(title: "Total Distance", icon: "map", value: String(format: "%.1f KM", healthManager.totalDistanceKm))
+                    StatCard(title: "Total Time", icon: "clock", value: healthManager.totalTimeFormatted)
                     StatCard( title: "BPM Average", icon: "waveform.path.ecg", value: "\(Int(healthManager.avgHeartRate))")
                     StatCard(title: "Pace Average", icon: "timer",  value: healthManager.avgPaceFormatted)
                 }
                 
                 WatchConnectedBadge(isConnected: connectivity.isReachable)
                 
-                //weekly chart
-                WeeklyActivityChart(data: healthManager.weeklyActivity)
-                
-                HStack(alignment: .top, spacing: 10) {
-                    RunSummary(summary: healthManager.weeklySummary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    SessionDetailLog(sessions: healthManager.sessionLog)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .padding()
-                .preferredColorScheme(.dark)
-                .onAppear {
-                    //healthManager.requestAuthorization()
-                    
-                }
-            } .padding(20)
+            }
+            .padding(.horizontal, 20)
+            .preferredColorScheme(.dark)
+            .onAppear {
+//                healthManager.requestAuthorization()
+            }
+            
         }
     }
 }
-
 #Preview {
     HomeView()
 }
