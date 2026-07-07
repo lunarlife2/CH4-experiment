@@ -7,6 +7,14 @@
 
 import SwiftUI
 
+struct OnboardingPage: Identifiable {
+	let id = UUID()
+	let title: String
+	let subtitle: String
+	let image: String
+	let background: String
+}
+
 struct OnboardingModel {
     let title: String = "RAN UP"
     let subtitle: String = "YOUR HEALTH, YOUR PACE,\nYOUR JOURNEY"
