@@ -30,13 +30,16 @@ struct ZonePickerView: View {
                 .labelsHidden()
                 .padding(.horizontal, 15)
                 
-                Button {
-                    print("start")
+                NavigationLink {
+                    LoadingView(running: running)
                 } label: {
-                    Text("Start")
+                    Button {
+                        print("start button presed")
+                    } label: {
+                        Text("Start")
+                    }
+                    .padding(.top,10)
                 }
-                .padding(.top,10)
-
             }
             .toolbar{
                 ToolbarItem(placement: .topBarTrailing){

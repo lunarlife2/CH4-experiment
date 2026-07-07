@@ -6,30 +6,40 @@
 //
 
 import SwiftUI
+import HealthKit
 
 struct LoadingView: View {
     @State private var progress: CGFloat = 1
     @State private var displayText = "Ready!"
+    @State private var isFinished = false
     private let totalTime = 2
     
+    let running: RunningType
+    
     var body: some View {
-        ZStack {
-            Circle()
-                .stroke(Color.gray.opacity(0.3), lineWidth: 17)
-            
-            Circle()
-                .trim(from: 0, to: progress)
-                .stroke(Color.orange, style: StrokeStyle(lineWidth: 17, lineCap: .round))
-                .rotationEffect(.degrees(-90))
-                .animation(.linear(duration: 0.5), value: progress)
-            
-            Text(displayText)
-                .bold()
-                .animation(nil, value: displayText)
+        NavigationStack{
+            ZStack {
+                Circle()
+                    .stroke(Color.gray.opacity(0.3), lineWidth: 17)
                 
-        }
-        .onAppear {
-            startCountDown()
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(Color.orange, style: StrokeStyle(lineWidth: 17, lineCap: .round))
+                    .rotationEffect(.degrees(-90))
+                    .animation(.linear(duration: 0.5), value: progress)
+                
+                Text(displayText)
+                    .bold()
+                    .animation(nil, value: displayText)
+                
+            }
+            .onAppear {
+                startCountDown()
+            }
+            .navigationDestination(isPresented: $isFinished) {
+                HeartBeatView()
+                    .navigationBarBackButtonHidden()
+            }
         }
     }
     
@@ -42,10 +52,14 @@ struct LoadingView: View {
                 progress = CGFloat(totalTime-tick)/CGFloat(totalTime)
             }
         }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(totalTime) + 1){
+            isFinished = true
+        }
     }
     
 }
 
 #Preview {
-    LoadingView()
+    LoadingView(running: RunningType(name: "Outdoor Run", icon: "figure.run", activity: .running, location: .outdoor))
 }
