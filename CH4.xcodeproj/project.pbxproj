@@ -14,6 +14,8 @@
 		A03B3B272FFCE2FE00E01D39 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A03B3B252FFCE2FE00E01D39 /* Config.xcconfig */; };
 		A03B3B292FFCE33A00E01D39 /* Watch.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A03B3B282FFCE33A00E01D39 /* Watch.xcconfig */; };
 		A03B3B2A2FFCE33A00E01D39 /* Watch.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A03B3B282FFCE33A00E01D39 /* Watch.xcconfig */; };
+		A03B3BBA2FFD2FE400E01D39 /* IOS.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A03B3BB92FFD2FE400E01D39 /* IOS.xcconfig */; };
+		A03B3BBB2FFD2FE400E01D39 /* IOS.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = A03B3BB92FFD2FE400E01D39 /* IOS.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +50,7 @@
 		A03501282FEE2EAF008173B7 /* CH4.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CH4.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A03B3B252FFCE2FE00E01D39 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		A03B3B282FFCE33A00E01D39 /* Watch.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Watch.xcconfig; sourceTree = "<group>"; };
+		A03B3BB92FFD2FE400E01D39 /* IOS.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = IOS.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -95,6 +98,7 @@
 		A035011F2FEE2EAF008173B7 = {
 			isa = PBXGroup;
 			children = (
+				A03B3BB92FFD2FE400E01D39 /* IOS.xcconfig */,
 				A03B3B282FFCE33A00E01D39 /* Watch.xcconfig */,
 				A03B3B252FFCE2FE00E01D39 /* Config.xcconfig */,
 				8F96E1772FF660F0007CBC02 /* CH4.entitlements */,
@@ -207,6 +211,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A03B3B272FFCE2FE00E01D39 /* Config.xcconfig in Resources */,
+				A03B3BBA2FFD2FE400E01D39 /* IOS.xcconfig in Resources */,
 				A03B3B292FFCE33A00E01D39 /* Watch.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -216,6 +221,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A03B3B262FFCE2FE00E01D39 /* Config.xcconfig in Resources */,
+				A03B3BBB2FFD2FE400E01D39 /* IOS.xcconfig in Resources */,
 				A03B3B2A2FFCE33A00E01D39 /* Watch.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -265,7 +271,7 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app reads your step count data to display daily activity.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "To record and update your health app.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.hlteam.ranup;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "$(WK_COMPANION_APP_BUNDLE_IDENTIFIER)";
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -305,7 +311,7 @@
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app reads your step count data to display daily activity.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "To record and update your health app.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.hlteam.ranup;
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = "$(WK_COMPANION_APP_BUNDLE_IDENTIFIER)";
 				INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -331,6 +337,7 @@
 		};
 		A03501312FEE2EB0008173B7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A03B3B252FFCE2FE00E01D39 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -392,6 +399,7 @@
 		};
 		A03501322FEE2EB0008173B7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = A03B3B252FFCE2FE00E01D39 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -445,7 +453,7 @@
 		};
 		A03501342FEE2EB0008173B7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A03B3B252FFCE2FE00E01D39 /* Config.xcconfig */;
+			baseConfigurationReference = A03B3BB92FFD2FE400E01D39 /* IOS.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -495,7 +503,7 @@
 		};
 		A03501352FEE2EB0008173B7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A03B3B252FFCE2FE00E01D39 /* Config.xcconfig */;
+			baseConfigurationReference = A03B3BB92FFD2FE400E01D39 /* IOS.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

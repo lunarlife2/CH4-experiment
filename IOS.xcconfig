@@ -1,6 +1,6 @@
 //
-//  Watch.xcconfig
-//  watch Watch App
+//  IOS.xcconfig
+//  CH4
 //
 //  Created by Averina on 07/07/26.
 //
@@ -9,7 +9,4 @@
 // https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
 #include "Config.xcconfig"
 
-PRODUCT_BUNDLE_IDENTIFIER = $(APP_BUNDLE_ID).watchkitapp
-
-// This must point to the iPhone app
-WK_COMPANION_APP_BUNDLE_IDENTIFIER = $(APP_BUNDLE_ID)
+PRODUCT_BUNDLE_IDENTIFIER = $(APP_BUNDLE_ID)
