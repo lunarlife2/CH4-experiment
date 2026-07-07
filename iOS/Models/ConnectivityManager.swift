@@ -14,6 +14,15 @@ class ConnectivityManager: NSObject, WCSessionDelegate{
     static let shared = ConnectivityManager()
     var heartRate: Double = 0
     
+    var isPaired: Bool = false
+    var isWatchAppInstalled: Bool = false
+    var isReachable: Bool = false
+    
+    var isWatchConnected: Bool {
+        isPaired && isWatchAppInstalled
+    }
+    
+    
     override init() {
         super.init()
         if WCSession.isSupported(){
@@ -31,8 +40,13 @@ class ConnectivityManager: NSObject, WCSessionDelegate{
         print("Reachable:", session.isReachable)
         print("Error:", error as Any)
         
+        
+        DispatchQueue.main.async {
+            self.isPaired = session.isPaired
+            self.isWatchAppInstalled = session.isWatchAppInstalled
+            self.isReachable = session.isReachable
+        }
     }
-    
     func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
         DispatchQueue.main.async {
             if let heartRate = message["heartRate"] as? Double {
@@ -40,6 +54,13 @@ class ConnectivityManager: NSObject, WCSessionDelegate{
             }
         }
     }
+    
+    func sessionReachabilityDidChange(_ session: WCSession) {
+        DispatchQueue.main.async {
+            self.isReachable = session.isReachable
+        }
+    }
+    
     
     
 #if os(iOS)
