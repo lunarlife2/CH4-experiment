@@ -11,19 +11,32 @@ import SwiftUI
 
 struct RootView: View {
 	@EnvironmentObject var settings: UserSettings
-	
+    @State private var healthManager = HealthKitManager()
+    @State private var profileViewModel: ProfileViewModel
+    
+    init() {
+        let sharedHealthManager = HealthKitManager()
+        _healthManager = State(wrappedValue: sharedHealthManager)
+        _profileViewModel = State(wrappedValue: ProfileViewModel(
+            name: "Xera Kenedy",
+            email: "xeraKen.edit@icoud.com",
+            healthManager: sharedHealthManager
+        ))
+    }
+    
     var body: some View {
 		if !settings.onboarding {
 			OnboardingView()
 		} else {
-			Text("sudah onboarding")
 			TabView {
-				HomeView()
-					.tabItem {
-						Image(systemName: "house.fill")
-						Text("Home")
-						
-					}
+				HomeView(
+					healthManager: healthManager,
+					viewModel: profileViewModel
+				)
+				.tabItem {
+					Image(systemName: "house.fill")
+					Text("Home")
+				}
 				
 				RunView()
 					.tabItem {
@@ -31,12 +44,18 @@ struct RootView: View {
 						Text("Run")
 					}
 				
-				ProfileView()
-					.tabItem {
-						Image(systemName: "person.fill")
-						Text("Profile")
-									}
-					.toolbarBackground(.green, for: .tabBar)
+				ProfileView(
+					viewModel: ProfileViewModel(
+						name: "Xera Kenedy",
+						email: "xeraKen.edit@icoud.com",
+						healthManager: healthManager
+					)
+				)
+				.tabItem {
+					Image(systemName: "person.fill")
+					Text("Profile")
+					
+				}
 			}
 			.tint(Color.secondaryNormal)
 		}
