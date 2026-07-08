@@ -10,6 +10,7 @@
 import SwiftUI
 
 struct RootView: View {
+	@EnvironmentObject var settings: UserSettings
     @State private var healthManager = HealthKitManager()
     @State private var profileViewModel: ProfileViewModel
     
@@ -24,39 +25,41 @@ struct RootView: View {
     }
     
     var body: some View {
-        TabView {
-            HomeView(
-                healthManager: healthManager,
-                viewModel: profileViewModel
-            )
-            .tabItem {
-                Image(systemName: "house.fill")
-                Text("Home")
-            }
-            
-            RunView()
-                .tabItem {
-                    Image(systemName: "figure.run")
-                    Text("Run")
-                }
-            
-            ProfileView(
-                            viewModel: ProfileViewModel(
-                                name: "Xera Kenedy",
-                                email: "xeraKen.edit@icoud.com",
-                                healthManager: healthManager
-                            )
-                        )
-                        .tabItem {
-                            Image(systemName: "person.fill")
-                            Text("Profile")
-
-                        }
-        }
-        .tint(Color.secondaryNormal)
+		if !settings.onboarding {
+			OnboardingView()
+		} else {
+			TabView {
+				HomeView(
+					healthManager: healthManager,
+					viewModel: profileViewModel
+				)
+				.tabItem {
+					Image(systemName: "house.fill")
+					Text("Home")
+				}
+				
+				RunView()
+					.tabItem {
+						Image(systemName: "figure.run")
+						Text("Run")
+					}
+				
+				ProfileView(
+					viewModel: ProfileViewModel(
+						name: "Xera Kenedy",
+						email: "xeraKen.edit@icoud.com",
+						healthManager: healthManager
+					)
+				)
+				.tabItem {
+					Image(systemName: "person.fill")
+					Text("Profile")
+					
+				}
+			}
+			.tint(Color.secondaryNormal)
+		}
     }
-    
-    
 }
     
 
