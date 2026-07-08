@@ -25,12 +25,13 @@ struct FirstDetailZoneView: View {
                     let zone = zones[index]
                     let isActive = (index + 1) == currentZone
                     
-                    HStack {
+                    HStack (alignment: .firstTextBaseline, spacing: 2) {
                         if isActive {
                             Image(systemName: "heart.fill")
+                                .font(.system(size: 12))
                             Text(zone.label)
                                 .bold()
-                                .font(.footnote)
+                                .font(.system(size: 12))
                         }
                     }
                     .padding(isActive ? 12 : 8)
@@ -39,38 +40,42 @@ struct FirstDetailZoneView: View {
                     .animation(.easeInOut, value: currentZone)
                 }
             }
+            .padding(.bottom, 10)
             
-            HStack {
+            HStack (alignment: .firstTextBaseline, spacing: 1) {
                 Text("107")
-                    .bold()
+                    .font(.system(size: 15, weight: .semibold))
                 Image(systemName: "heart.fill")
                     .foregroundStyle(Color.red)
+                    .font(.system(size: 15))
+                
             }
-                        
-            .padding()
+            .padding(.bottom, 10)
             
             VStack (alignment: .leading) {
                 Text("Total Time")
+                    .font(.system(size: 12, weight: .light))
                 Text("0:46:29")
-                    .bold()
+                    .font(.system(size: 15, weight: .semibold))
             }
-            .padding()
+            .padding(.bottom, 10)
             
             VStack (alignment: .leading) {
                 Text("Distance")
+                    .font(.system(size: 12, weight: .light))
                 HStack (spacing: 0) {
                     Text("2")
-                        .bold()
+                        .font(.system(size: 15, weight: .semibold))
                     Text("KM")
-                        .font(.system(size: 10))
+                        .font(.system(size: 10, weight: .semibold))
                         .padding(.top, 5)
-                        .bold()
                 }
                 
             }
-            .padding()
+            .padding(.bottom, 10)
             
         }
+        .padding()
         
     }
 }

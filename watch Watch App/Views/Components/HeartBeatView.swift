@@ -18,12 +18,14 @@ struct HeartBeatView: View {
                             
                 HStack (spacing: 50){
                     Text("Zone 3")
+                        .fontWeight(.semibold)
                     Text("0:46:29")
+                        .fontWeight(.semibold)
                 }
                 .padding(.top, 20)
                 
                 Text("SLOW DOWN")
-                    .bold()
+                    .fontWeight(.heavy)
                     .foregroundStyle(Color.red)
 //                    .padding(.bottom, 20)
                     .padding(.top, 10)

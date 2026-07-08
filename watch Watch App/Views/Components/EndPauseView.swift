@@ -20,7 +20,6 @@ struct EndPauseView: View {
                         EndRunningView()
                     } label: {
                         Image(systemName: "xmark")
-                            .foregroundStyle(Color.white)
                     }
                     .tint(Color.red)
                     .padding(.horizontal, 40)
@@ -49,6 +48,8 @@ struct EndPauseView: View {
             .toolbar{
                 ToolbarItem(placement: .topBarTrailing){
                     Text("\(running.name)")
+                        .padding(.top, 10)
+                        .font(.system(size: 14))
                         
                 }
             }
