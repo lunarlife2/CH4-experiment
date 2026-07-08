@@ -10,32 +10,37 @@
 import SwiftUI
 
 struct RootView: View {
+	@EnvironmentObject var settings: UserSettings
+	
     var body: some View {
-        TabView {
-            HomeView()
-                .tabItem {
-                    Image(systemName: "house.fill")
-                    Text("Home")
-                    
-                }
-            
-            RunView()
-                .tabItem {
-                    Image(systemName: "figure.run")
-                    Text("Run")
-                }
-            
-            ProfileView()
-                .tabItem {
-                    Image(systemName: "person.fill")
-                    Text("Profile")
-                                }
-                .toolbarBackground(.green, for: .tabBar)
-        }
-        .tint(Color.secondaryNormal)
+		if !settings.onboarding {
+			OnboardingView()
+		} else {
+			Text("sudah onboarding")
+			TabView {
+				HomeView()
+					.tabItem {
+						Image(systemName: "house.fill")
+						Text("Home")
+						
+					}
+				
+				RunView()
+					.tabItem {
+						Image(systemName: "figure.run")
+						Text("Run")
+					}
+				
+				ProfileView()
+					.tabItem {
+						Image(systemName: "person.fill")
+						Text("Profile")
+									}
+					.toolbarBackground(.green, for: .tabBar)
+			}
+			.tint(Color.secondaryNormal)
+		}
     }
-    
-    
 }
     
 
