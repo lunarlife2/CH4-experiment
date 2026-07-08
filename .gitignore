@@ -18,6 +18,7 @@ build/
 *.ipa
 *.dSYM.zip
 *.dSYM
+Config.xcconfig
 
 # --- Swift Package Manager ---
 .build/
