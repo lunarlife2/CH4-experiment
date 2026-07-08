@@ -24,7 +24,7 @@ struct PaginationTabView: View {
                 GeometryReader { geo in
                     ScrollView {
                         VStack(spacing: 0) {
-                            HeartBeatView()
+                            HeartBeatView(running: running)
                                 .frame(width: geo.size.width, height: geo.size.height)
                             
                             FirstDetailZoneView(currentZone: 3)

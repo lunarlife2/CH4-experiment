@@ -21,24 +21,33 @@ struct PrimaryHeartPulse: View {
     @State private var redHeartWidth: Double = 70
     @State private var redHeartAnimatingHeight: Double = 0
     @State private var redHeartHeight: Double = 70
+    
+    @State private var healthMonitor = HealthMonitor()
+    let running: RunningType
+
     var body: some View {
         VStack {
             HStack(spacing: 20) {
                 ZStack {
                     Group {
-                        HeartPulses(redHeartWidth: baseSize, blackHeartWidth: baseSize-5, expandSizeTo: baseSize * 3)
+                        HeartPulses(redHeartWidth: baseSize, blackHeartWidth: baseSize-5, expandSizeTo: baseSize * 3, healthMonitor: healthMonitor)
                         ExpandingHeartView(animatingHeight: $redHeartAnimatingHeight, width: $redHeartWidth, height: $redHeartHeight, color: .red)
                             .scaleEffect(wiggleAnimate ? 1.03 : 1)
-                        SideGlowHeart(wiggleAnimate: $wiggleAnimate, width: baseSize + 5, height: baseSize)
+                        SideGlowHeart(wiggleAnimate: $wiggleAnimate, width: baseSize , height: baseSize)
                         InnerShadowHeart(wiggleAnimate: $wiggleAnimate, width: baseSize - 5, height: baseSize - 5, color: .black)
                         
                         VStack {
-                            Text("170")
+                            Text("\(Int(healthMonitor.heartRate))")
                                 .font(.system(size: 20))
                                 .bold()
                             Text("BPM")
                                 .font(.system(size: 9))
                                 .bold()
+                        }
+                        .onAppear{
+                            Task {
+                                await healthMonitor.detectHeartRate(activityType: running.activity, locationType: running.location)
+                            }
                         }
                         
                             
@@ -61,8 +70,8 @@ struct PrimaryHeartPulse: View {
                 withAnimation(.spring(duration: 0.4, bounce: 0.8)) {
                     wiggleAnimate = false
                     redHeartAnimatingHeight = 0
-                    redHeartHeight = baseSize - 3
-                    redHeartWidth = baseSize - 3
+                    redHeartHeight = baseSize - 5
+                    redHeartWidth = baseSize - 5
                 }
             }
         }
@@ -73,5 +82,5 @@ struct PrimaryHeartPulse: View {
 }
 
 #Preview {
-    PrimaryHeartPulse()
+    PrimaryHeartPulse(running: RunningType.running[0])
 }

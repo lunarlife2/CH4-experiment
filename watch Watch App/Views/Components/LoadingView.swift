@@ -15,7 +15,7 @@ struct LoadingView: View {
     private let totalTime = 2
     
     let running: RunningType
-    
+        
     var body: some View {
         NavigationStack{
             ZStack {
@@ -37,9 +37,10 @@ struct LoadingView: View {
                 startCountDown()
             }
             .navigationDestination(isPresented: $isFinished) {
-                HeartBeatView()
+                PaginationTabView(running: running)
                     .navigationBarBackButtonHidden()
             }
+            .navigationBarBackButtonHidden(true)
         }
     }
     

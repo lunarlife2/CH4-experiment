@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ProfileSetupView: View {
 	@StateObject var vm = OnboardingViewModel()
-	@State var 
 	
 	var body: some View {
 		Text("Welcome to profile setup")

@@ -33,18 +33,14 @@ struct ZonePickerView: View {
                 NavigationLink {
                     LoadingView(running: running)
                 } label: {
-                    Button {
-                        print("start button presed")
-                    } label: {
-                        Text("Start")
-                    }
-                    .padding(.top,10)
+                    Text("Start")
                 }
+                .padding(.top, 10)
             }
             .toolbar{
                 ToolbarItem(placement: .topBarTrailing){
                     Text("\(running.name)")
-                        
+                        .padding(.vertical, 20)
                 }
             }
         }
