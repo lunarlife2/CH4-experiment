@@ -43,7 +43,7 @@ struct ExpandingHeartView: View {
             .fill(color)
             .scaledToFit()
             .frame(width: width, height: height)
-            .frame(maxWidth: width + 20, maxHeight: height + 20)
+            .frame(maxWidth: width + 10, maxHeight: height + 10)
     }
 }
 

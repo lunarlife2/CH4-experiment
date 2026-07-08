@@ -25,12 +25,13 @@ struct SecondDetailZoneView: View {
                     let zone = zones[index]
                     let isActive = (index + 1) == currentZone
                     
-                    HStack {
+                    HStack (alignment: .firstTextBaseline, spacing: 2) {
                         if isActive {
                             Image(systemName: "heart.fill")
+                                .font(.system(size: 12))
                             Text(zone.label)
                                 .bold()
-                                .font(.footnote)
+                                .font(.system(size: 12))
                         }
                     }
                     .padding(isActive ? 12 : 8)
@@ -39,39 +40,39 @@ struct SecondDetailZoneView: View {
                     .animation(.easeInOut, value: currentZone)
                 }
             }
+            .padding(.bottom, 10)
             
             VStack (alignment: .leading) {
                 Text("Time in Target Zone")
-                    .font(.system(size: 13))
+                    .font(.system(size: 12, weight: .light))
                 Text("0:31:09")
-                    .bold()
+                    .font(.system(size: 15, weight: .semibold))
             }
-            .padding()
+            .padding(.bottom, 10)
             
             VStack (alignment: .leading) {
                 Text("Calorie")
-                    .font(.system(size: 13))
+                    .font(.system(size: 12, weight: .light))
                 HStack (spacing: 0) {
                     Text("200")
-                        .bold()
+                        .font(.system(size: 15, weight: .semibold))
                     Text("KCal")
-                        .font(.system(size: 10))
+                        .font(.system(size: 10, weight: .semibold))
                         .padding(.top, 5)
-                        .bold()
                 }
             }
-            .padding()
+            .padding(.bottom, 10)
             
             VStack (alignment: .leading) {
                 Text("Average Pace")
-                    .font(.system(size: 13))
+                    .font(.system(size: 12, weight: .light))
                 Text("21'18''")
-                    .bold()
-                
+                    .font(.system(size: 15, weight: .semibold))
             }
-            .padding()
+            .padding(.bottom, 10)
             
         }
+        .padding()
     }
 }
 

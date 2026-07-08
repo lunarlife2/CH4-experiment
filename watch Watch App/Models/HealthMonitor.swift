@@ -92,14 +92,16 @@ class HealthMonitor: NSObject, HKWorkoutSessionDelegate, HKLiveWorkoutBuilderDel
                session?.prepare()
 
                print("Prepare")
+               
+               try await builder?.beginCollection(at: Date())
+
+               print("Begin Collection")
 
                session?.startActivity(with: Date())
 
                print("Start Activity")
 
-               try await builder?.beginCollection(at: Date())
-
-               print("Begin Collection")
+               
 
            } catch {
                print(error)

@@ -14,7 +14,7 @@ struct BreakdownView : View {
     @Binding var redHeartAnimatingHeight: Double
     @Binding var redHeartWidth: Double
     @Binding var redHeartHeight: Double
-    
+    @State private var healthMonitor = HealthMonitor()
     
     var body: some View {
         VStack(spacing: 20) {
@@ -34,7 +34,7 @@ struct BreakdownView : View {
                 .scaleEffect(0.5)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .frame(width: 100, height: 100)
-            HeartPulses(redHeartWidth: 50, blackHeartWidth: 50, expandSizeTo: 200)
+            HeartPulses(redHeartWidth: 50, blackHeartWidth: 50, expandSizeTo: 200, healthMonitor: healthMonitor)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .frame(width: 100, height: 100)
         }

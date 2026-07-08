@@ -23,12 +23,14 @@ struct TabPagingView: View {
                         ZonePickerView(running: item)
                     } label: {
                         ZStack{
-                            Circle().fill(Color.red)
+                            Circle().fill(Color.accentDarkHover)
                             VStack{
                                 Image(systemName: item.icon)
                                     .resizable()
-                                    .frame(width: 66, height: 76)
+                                    .frame(width: index == 0 ? 66 : 86, height: 76)
+                                    .foregroundStyle(Color.secondaryNormal)
                                 Text(item.name)
+                                    .foregroundStyle(Color.secondaryNormal)
                             }
                             
                         }
