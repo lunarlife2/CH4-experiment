@@ -28,3 +28,8 @@ struct CompletionView: View {
 		}
 	}
 }
+
+#Preview {
+	CompletionView()
+		.environmentObject(UserSettings())
+}
