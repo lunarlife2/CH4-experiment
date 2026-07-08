@@ -22,6 +22,11 @@ class HealthKitManager{
     var totalDistanceKm: Double = 0
     var totalTimeFormatted: String = "0h 0m"
     
+    var age: Int?
+    var heightCM: Double?
+    var weightKG: Double?
+    var maxHeartRateBPM: Int?
+    
     func requestAuthorization() {
         guard HKHealthStore.isHealthDataAvailable() else { return }
         
@@ -29,7 +34,10 @@ class HealthKitManager{
             HKQuantityType(.activeEnergyBurned),
             HKQuantityType(.heartRate),
             HKQuantityType(.distanceWalkingRunning),
-            HKObjectType.workoutType()
+            HKObjectType.workoutType(),
+            HKObjectType.characteristicType(forIdentifier: .dateOfBirth)!,
+            HKQuantityType(.height),
+            HKQuantityType(.bodyMass)
         ]
         
         healthStore.requestAuthorization(toShare: [], read: typesToRead) { success, error in
@@ -37,7 +45,7 @@ class HealthKitManager{
                 self.fetchTodayCalories()
                 self.fetchAverageHeartRate()
                 self.fetchTodayWorkoutStats()
-                
+                self.fetchProfileData()
             }
         }
     }
@@ -144,4 +152,67 @@ class HealthKitManager{
     }
     
     
+    func fetchProfileData() {
+         fetchAge()
+         fetchHeight()
+         fetchWeight()
+         fetchMaxHeartRate()
+     }
+     
+     func fetchAge() {
+         do {
+             let birthdayComponents = try healthStore.dateOfBirthComponents()
+             guard let birthDate = Calendar.current.date(from: birthdayComponents) else { return }
+             let ageComponents = Calendar.current.dateComponents([.year], from: birthDate, to: Date())
+             DispatchQueue.main.async {
+                 self.age = ageComponents.year
+             }
+         } catch {
+             print("Gagal ambil tanggal lahir: \(error.localizedDescription)")
+         }
+     }
+     
+     func fetchHeight() {
+         let type = HKQuantityType(.height)
+         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+         let query = HKSampleQuery(sampleType: type, predicate: nil, limit: 1, sortDescriptors: [sortDescriptor]) { _, samples, _ in
+             guard let sample = samples?.first as? HKQuantitySample else { return }
+             DispatchQueue.main.async {
+                 self.heightCM = sample.quantity.doubleValue(for: .meterUnit(with: .centi))
+             }
+         }
+         healthStore.execute(query)
+     }
+     
+     func fetchWeight() {
+         let type = HKQuantityType(.bodyMass)
+         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+         let query = HKSampleQuery(sampleType: type, predicate: nil, limit: 1, sortDescriptors: [sortDescriptor]) { _, samples, _ in
+             guard let sample = samples?.first as? HKQuantitySample else { return }
+             DispatchQueue.main.async {
+                 self.weightKG = sample.quantity.doubleValue(for: .gramUnit(with: .kilo))
+             }
+         }
+         healthStore.execute(query)
+     }
+     
+     func fetchMaxHeartRate() {
+         let type = HKQuantityType(.heartRate)
+         let predicate = HKQuery.predicateForSamples(
+             withStart: Calendar.current.date(byAdding: .day, value: -90, to: Date()),
+             end: Date()
+         )
+         let query = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: predicate, options: .discreteMax) { _, result, _ in
+             let unit = HKUnit.count().unitDivided(by: .minute())
+             let maxBPM = result?.maximumQuantity()?.doubleValue(for: unit)
+             DispatchQueue.main.async {
+                 if let maxBPM {
+                     self.maxHeartRateBPM = Int(maxBPM)
+                 } else if let age = self.age {
+                     self.maxHeartRateBPM = 220 - age
+                 }
+             }
+         }
+         healthStore.execute(query)
+     }
 }

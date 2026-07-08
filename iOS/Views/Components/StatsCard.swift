@@ -20,12 +20,14 @@ struct StatCard: View {
                     .foregroundColor(.orange)
                 
                 Text(value)
-                    .font(.system(size: 28, weight: .bold))
+                    .font(.system(size: 25, weight: .bold))
                     .foregroundColor(.white)
             }
             Text(title)
                 .foregroundColor(.white)
-                .font(.system(size: 20, weight: .semibold))
+                .font(.system(size: 22, weight: .semibold))
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 10)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 16)
