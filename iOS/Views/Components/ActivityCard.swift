@@ -22,7 +22,7 @@ struct ActivityCard: View {
             
             Text(title)
                 .foregroundColor(.white)
-                .font(.system(size: 20, weight: .semibold))
+                .font(.system(size: 17, weight: .semibold))
         }
         .frame(maxWidth: .infinity, minHeight: 140, maxHeight: 140)
         .background(
