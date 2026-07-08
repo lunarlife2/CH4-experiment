@@ -9,4 +9,4 @@
 // https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
 
 
-APP_BUNDLE_ID = com.ayuk.ranup
+APP_BUNDLE_ID = com.htlteam.RWhealthkit

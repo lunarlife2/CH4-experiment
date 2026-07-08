@@ -46,7 +46,7 @@ class ProfileViewModel {
 //        localizationManager.currentLanguage = language
 //    }
 
-    var ageText: String {
+    var ageText: String {    
         healthManager.age.map { "\($0)" } ?? "--"
     }
 
