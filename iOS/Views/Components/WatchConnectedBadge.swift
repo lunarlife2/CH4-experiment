@@ -13,7 +13,7 @@ struct WatchConnectedBadge: View {
     var body: some View {
         HStack( spacing: 6) {
             Text(isConnected ? "Watch Connected" : "Watch Not Connected")
-                .font(.system(size: 22, weight: .semibold))
+                .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(.orange)
                 .fontWeight(.semibold)
             
@@ -28,7 +28,7 @@ struct WatchConnectedBadge: View {
                         .offset(x: 8, y: -8)
                 )
         }
-        .frame(maxWidth: .infinity, alignment: .trailing)
+        .frame(maxWidth: .infinity, alignment: .center)
        
 ////        .overlay(
 //////            RoundedRectangle(cornerRadius: 8)

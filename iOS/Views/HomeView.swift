@@ -49,7 +49,7 @@ struct HomeView: View {
                     StatCard(title: "Pace Average", icon: "timer", value: healthManager.avgPaceFormatted)
                 }
 
-                WatchConnectedBadge(isConnected: connectivity.isReachable)
+                WatchConnectedBadge(isConnected: connectivity.isPaired)
             }
             .padding(.horizontal, 20)
             .preferredColorScheme(.dark)

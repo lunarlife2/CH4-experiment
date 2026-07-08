@@ -5,20 +5,22 @@
 //  Created by Ni Komang Ayu Juliana on 07/07/26.
 //
 
-//
-//  RootView.swift
-//  CH4
-//
-//  Created by Ni Komang Ayu Juliana on 07/07/26.
-//
-
 import SwiftUI
+
+struct ActiveRunConfig: Identifiable {
+    let id = UUID()
+    let runType: RunType
+    let zone: Int
+}
 
 struct RootView: View {
     
+    @State private var selectedTab: Int = 0
     @EnvironmentObject var settings: UserSettings
     @State private var healthManager = HealthKitManager()
     @State private var profileViewModel: ProfileViewModel
+    @State private var runSession = RunSessionManager.shared
+    @State private var activeRunConfig: ActiveRunConfig?
     
     init() {
         let sharedHealthManager = HealthKitManager()
@@ -34,7 +36,7 @@ struct RootView: View {
         if !settings.onboarding {
             OnboardingView()
         } else {
-            TabView {
+            TabView(selection: $selectedTab) {
                 HomeView(
                     healthManager: healthManager,
                     viewModel: profileViewModel
@@ -43,17 +45,18 @@ struct RootView: View {
                     Image(systemName: "house.fill")
                     Text("Home")
                 }
+                .tag(0)
                 
                 RunView(onStartRun: { runType, zone in
-                    print("Selected: \(runType), zone: \(zone)")
+                    runSession.configure(age: healthManager.age, weightKG: healthManager.weightKG)
+                    activeRunConfig = ActiveRunConfig(runType: runType, zone: zone)
                 })
                 .tabItem {
                     Image(systemName: "figure.run")
                     Text("Run")
                 }
+                .tag(1)
                 
-                // PERUBAHAN: pakai profileViewModel yang sama (bukan bikin baru),
-                // dan tambah showBackButton: false karena ini root tab-nya sendiri
                 ProfileView(
                     viewModel: profileViewModel,
 //                    showBackButton: false
@@ -62,8 +65,15 @@ struct RootView: View {
                     Image(systemName: "person.fill")
                     Text("Profile")
                 }
+                .tag(2)
             }
             .tint(Color.secondaryNormal)
+            .fullScreenCover(item: $activeRunConfig) { config in
+                ActiveRunView(runType: config.runType, zone: config.zone) {
+                    activeRunConfig = nil
+                    selectedTab = 0
+                }
+            }
         }
     }
 }

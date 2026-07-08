@@ -12,6 +12,8 @@ import Observation
 @Observable
 class HealthKitManager{
     
+    static let shared = HealthKitManager()
+    
     let healthStore = HKHealthStore()
     
     var calories: Double = 0
@@ -21,6 +23,7 @@ class HealthKitManager{
     var avgPaceFormatted: String = "00:00"
     var totalDistanceKm: Double = 0
     var totalTimeFormatted: String = "0h 0m"
+    var caloriesBurned: Double = 0
     
     var age: Int?
     var heightCM: Double?
@@ -40,7 +43,13 @@ class HealthKitManager{
             HKQuantityType(.bodyMass)
         ]
         
-        healthStore.requestAuthorization(toShare: [], read: typesToRead) { success, error in
+        let typesToShare: Set<HKSampleType> = [
+             HKObjectType.workoutType(),
+             HKQuantityType(.activeEnergyBurned),
+             HKQuantityType(.distanceWalkingRunning)
+         ]
+        
+        healthStore.requestAuthorization(toShare: typesToShare, read: typesToRead) { success, error in
             if success {
                 self.fetchTodayCalories()
                 self.fetchAverageHeartRate()
@@ -51,17 +60,121 @@ class HealthKitManager{
     }
     
     
-    func fetchTodayCalories() {
-        let type = HKQuantityType(.activeEnergyBurned)
-        let predicate = HKQuery.predicateForSamples(
-            withStart: Calendar.current.startOfDay(for: Date()),
-            end: Date()
+    func saveRun(
+        type: RunType,
+        distanceKm: Double,
+        duration: TimeInterval,
+        calories: Double,
+        completion: @escaping (Bool) -> Void
+    ) {
+        let endDate = Date()
+        let startDate = endDate.addingTimeInterval(-duration)
+
+        let configuration = HKWorkoutConfiguration()
+        configuration.activityType = .running
+        configuration.locationType = type == .indoor ? .indoor : .outdoor
+
+        let builder = HKWorkoutBuilder(
+            healthStore: healthStore,
+            configuration: configuration,
+            device: .local()
         )
-        let query = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, _ in
-            DispatchQueue.main.async {
-                self.calories = result?.sumQuantity()?.doubleValue(for: .kilocalorie()) ?? 0
+
+        builder.beginCollection(withStart: startDate) { success, error in
+            guard success else {
+                DispatchQueue.main.async { completion(false) }
+                return
+            }
+
+            let distanceQuantity = HKQuantity(unit: .meter(), doubleValue: distanceKm * 1000)
+            let distanceSample = HKQuantitySample(
+                type: HKQuantityType(.distanceWalkingRunning),
+                quantity: distanceQuantity,
+                start: startDate,
+                end: endDate
+            )
+
+            let energyQuantity = HKQuantity(unit: .kilocalorie(), doubleValue: calories)
+            let energySample = HKQuantitySample(
+                type: HKQuantityType(.activeEnergyBurned),
+                quantity: energyQuantity,
+                start: startDate,
+                end: endDate
+            )
+
+            builder.add([distanceSample, energySample]) { success, error in
+                guard success else {
+                    DispatchQueue.main.async { completion(false) }
+                    return
+                }
+
+                builder.endCollection(withEnd: endDate) { success, error in
+                    guard success else {
+                        DispatchQueue.main.async { completion(false) }
+                        return
+                    }
+
+                    builder.finishWorkout { workout, error in
+                        DispatchQueue.main.async {
+                            completion(workout != nil)
+                        }
+                    }
+                }
             }
         }
+    }
+    
+    
+    func fetchTodayCalories() {
+        let startDate = Calendar.current.startOfDay(for: Date())
+
+        let type = HKQuantityType(.activeEnergyBurned)
+        let predicate = HKQuery.predicateForSamples(
+            withStart: startDate,
+            end: Date()
+        )
+
+        let query = HKStatisticsQuery(
+            quantityType: type,
+            quantitySamplePredicate: predicate,
+            options: .cumulativeSum
+        ) { _, result, _ in
+
+            let value =
+                result?.sumQuantity()?
+                .doubleValue(for: .kilocalorie()) ?? 0
+
+            DispatchQueue.main.async {
+                self.caloriesBurned = value
+            }
+        }
+
+        healthStore.execute(query)
+    }
+    
+    
+    func fetchCalories(from startDate: Date, completion: @escaping (Double) -> Void) {
+        let type = HKQuantityType(.activeEnergyBurned)
+        let predicate = HKQuery.predicateForSamples(
+            withStart: startDate,
+            end: Date()
+        )
+
+        let query = HKStatisticsQuery(
+            quantityType: type,
+            quantitySamplePredicate: predicate,
+            options: .cumulativeSum
+        ) { _, result, _ in
+
+            let value =
+                result?.sumQuantity()?
+                .doubleValue(for: .kilocalorie()) ?? 0
+
+            DispatchQueue.main.async {
+                completion(value)
+            }
+        }
+
         healthStore.execute(query)
     }
     

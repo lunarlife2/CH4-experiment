@@ -58,6 +58,7 @@ struct RunView: View {
                 
                 Spacer()
             }
+            .toolbar(step == .selectType ? .visible : .hidden, for: .tabBar)
             .padding(.horizontal, 24)
         }
     }
@@ -105,7 +106,7 @@ struct RunView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(Capsule().fill(Color(red: 0.35, green: 0.12, blue: 0.05)))
+                        .glassEffect(.regular.tint(Color.primaryDarker), in: Capsule())
                 }
                 
                 Button {
@@ -118,7 +119,7 @@ struct RunView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(Capsule().fill(Color.orange))
+                        .glassEffect(.regular.tint(Color.secondaryNormal), in: Capsule())
                         .padding(.bottom, 20)
                 }
             }
