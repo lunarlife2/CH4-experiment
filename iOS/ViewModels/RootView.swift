@@ -37,35 +37,32 @@ struct RootView: View {
             OnboardingView()
         } else {
             TabView(selection: $selectedTab) {
-                HomeView(
-                    healthManager: healthManager,
-                    viewModel: profileViewModel
-                )
-                .tabItem {
-                    Image(systemName: "house.fill")
-                    Text("Home")
-                }
-                .tag(0)
+                HomeView(healthManager: healthManager, viewModel: profileViewModel)
+                    .tabItem {
+                        Image(systemName: "house.fill")
+                        Text("Home")
+                    }
+                    .tag(0)
                 
-                RunView(onStartRun: { runType, zone in
-                    runSession.configure(age: healthManager.age, weightKG: healthManager.weightKG)
-                    activeRunConfig = ActiveRunConfig(runType: runType, zone: zone)
-                })
+                RunView(
+                    selectedTab: $selectedTab,
+                    onStartRun: { runType, zone in
+                        runSession.configure(age: healthManager.age, weightKG: healthManager.weightKG)
+                        activeRunConfig = ActiveRunConfig(runType: runType, zone: zone)
+                    }
+                )
                 .tabItem {
                     Image(systemName: "figure.run")
                     Text("Run")
                 }
                 .tag(1)
                 
-                ProfileView(
-                    viewModel: profileViewModel,
-//                    showBackButton: false
-                )
-                .tabItem {
-                    Image(systemName: "person.fill")
-                    Text("Profile")
-                }
-                .tag(2)
+                ProfileView(viewModel: profileViewModel)
+                    .tabItem {
+                        Image(systemName: "person.fill")
+                        Text("Profile")
+                    }
+                    .tag(2)
             }
             .tint(Color.secondaryNormal)
             .fullScreenCover(item: $activeRunConfig) { config in

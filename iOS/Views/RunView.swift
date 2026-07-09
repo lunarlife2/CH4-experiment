@@ -7,13 +7,19 @@
 
 import SwiftUI
 import Foundation
-
 struct RunView: View {
     @State private var selectedType: RunType?
     @State private var step: RunSetupStep = .selectType
     @State private var selectedZone: Int = 2
+    @Binding var selectedTab: Int
     
     var onStartRun: (RunType, Int) -> Void
+    
+    init(selectedTab: Binding<Int>, onStartRun: @escaping (RunType, Int) -> Void) {
+        self._selectedTab = selectedTab
+        self.onStartRun = onStartRun
+    }
+    
     
     var body: some View {
         ZStack {
@@ -24,7 +30,7 @@ struct RunView: View {
                     .font(.system(size: 40, weight: .bold))
                     .foregroundColor(.white)
                     .padding(.top, 60)
-
+                
                 if step == .selectType {
                     RunTypeButton(
                         backgroundImageName: "buttonrun",
@@ -61,8 +67,20 @@ struct RunView: View {
             .toolbar(step == .selectType ? .visible : .hidden, for: .tabBar)
             .padding(.horizontal, 24)
         }
+        .onChange(of: selectedTab) { _, newTab in
+            if newTab != 1 {
+                resetSelection()
+            }
+        }
     }
     
+    private func resetSelection() {
+        withAnimation {
+            step = .selectType
+            selectedType = nil
+            selectedZone = 2
+        }
+    }
     
     private func selectType(_ type: RunType) {
         selectedType = type
@@ -70,7 +88,6 @@ struct RunView: View {
             step = .configureZone
         }
     }
-    
     
     private var zoneSelectionSection: some View {
         VStack(spacing: 10) {
@@ -126,10 +143,13 @@ struct RunView: View {
             .padding(.top, 16)
         }
     }
-}
+}  
 
 #Preview {
-    RunView(onStartRun: { type, zone in
-        print("Start run: \(type), zone: \(zone)")
-    })
+    RunView(
+        selectedTab: .constant(1),
+        onStartRun: { type, zone in
+            print("Start run: \(type), zone: \(zone)")
+        }
+    )
 }
