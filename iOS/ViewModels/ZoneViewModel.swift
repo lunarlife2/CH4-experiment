@@ -65,6 +65,28 @@ final class ZoneViewModel {
         return Self.zoneIndex(forBPM: currentBPM, in: computedZones)
     }
 
+    var targetZone: ZoneDisplayItem? {
+        zones.first(where: { $0.zone == currentZoneIndex })
+    }
+
+    var targetZoneColor: Color {
+        targetZone?.color ?? Color(hex: "3B82F6")
+    }
+
+    var targetZoneProgress: Double {
+        guard let target = targetZone else { return 0 }
+        let range = Double(target.max - target.min)
+        guard range > 0 else {
+            return currentBPM >= target.min ? 1.0 : 0.0
+        }
+        let progress = Double(currentBPM - target.min) / range
+        return min(max(progress, 0), 1)
+    }
+
+    var targetZonePercentageLabel: String {
+        "\(Int((targetZoneProgress * 100).rounded()))%"
+    }
+    
     var zoneTimeFormatted: String {
         "12:45"
     }
