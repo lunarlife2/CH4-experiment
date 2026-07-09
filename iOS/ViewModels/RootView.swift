@@ -13,6 +13,10 @@ struct ActiveRunConfig: Identifiable {
     let zone: Int
 }
 
+enum AppRoute: Hashable {
+    case activeRun
+}
+
 struct RootView: View {
     
     @State private var selectedTab: Int = 0
@@ -70,6 +74,17 @@ struct RootView: View {
                     activeRunConfig = nil
                     selectedTab = 0
                 }
+            }
+            .onChange(of: ConnectivityManager.shared.remoteWorkoutState) { _, newState in
+                guard newState == "started" else {return}
+                guard activeRunConfig == nil else {return}
+                
+                let runType: RunType = ConnectivityManager.shared.remoteRunTypeLocation == "indoor" ? .indoor : .outdoor
+                let zone = ConnectivityManager.shared.remoteZoneSelected
+                
+                runSession.configure(age: healthManager.age, weightKG: healthManager.weightKG)
+                runSession.startRemoteRun(type: runType, zone: zone)
+                activeRunConfig = ActiveRunConfig(runType: runType, zone: zone)
             }
         }
     }

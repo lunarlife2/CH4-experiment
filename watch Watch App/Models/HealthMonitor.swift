@@ -192,11 +192,17 @@ class HealthMonitor: NSObject, HKWorkoutSessionDelegate, HKLiveWorkoutBuilderDel
         
         switch toState {
         case .paused:
-            sessionState = .paused
+            DispatchQueue.main.async {
+                self.sessionState = .paused
+            }
         case .running:
-            sessionState = .running
+            DispatchQueue.main.async {
+                self.sessionState = .running
+            }
         case .ended:
-            sessionState = .ended
+            DispatchQueue.main.async {
+                self.sessionState = .ended
+            }
             Task {
                 do {
                     try await builder?.endCollection(at: date)
