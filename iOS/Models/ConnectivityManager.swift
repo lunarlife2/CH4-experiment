@@ -32,7 +32,11 @@ class ConnectivityManager: NSObject, WCSessionDelegate{
     var remoteDistance: Double = 0
     var remoteElapsedTime: TimeInterval = 0
     var remoteTimeInZone: TimeInterval = 0
+    var remoteZone: Int = 0
     
+    //connect watchos and ios
+    var onRemoteWorkoutStateChanged: ((String) -> Void)?
+    var isApplyingRemoteState = false
     
     override init() {
         super.init()
@@ -58,6 +62,23 @@ class ConnectivityManager: NSObject, WCSessionDelegate{
         
         pendingContext = context
         trySendPendingContext()
+    }
+    
+    func sendWorkoutState(_ state: String) {
+        let session = WCSession.default
+        guard session.activationState == .activated else { return }
+
+        try? session.updateApplicationContext(["workoutState": state])
+
+        if session.isReachable {
+            session.sendMessage(
+                ["workoutState": state],
+                replyHandler: nil,
+                errorHandler: { error in
+                    print("sendWorkoutState (iOS) gagal:", error)
+                }
+            )
+        }
     }
     
     private func trySendPendingContext() {
@@ -100,6 +121,7 @@ class ConnectivityManager: NSObject, WCSessionDelegate{
         DispatchQueue.main.async {
             if let state = message["workoutState"] as? String {
                 self.remoteWorkoutState = state
+                self.onRemoteWorkoutStateChanged?(state)
             }
             if let hr = message["heartRate"] as? Double {
                 self.remoteHeartRate = hr
@@ -119,9 +141,21 @@ class ConnectivityManager: NSObject, WCSessionDelegate{
             if let zoneTime = message["timeInZone"] as? TimeInterval {
                 self.remoteTimeInZone = zoneTime
             }
+            if let zoneSelected = message["zoneSelected"] as? Int {
+                self.remoteZone = zoneSelected
+            }
         }
         
         replyHandler(["status": "received", "keys": Array(message.keys)])
+    }
+    
+    func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
+        DispatchQueue.main.async {
+            if let state = applicationContext["workoutState"] as? String {
+                self.remoteWorkoutState = state
+                self.onRemoteWorkoutStateChanged?(state)
+            }
+        }
     }
     
     func sessionReachabilityDidChange(_ session: WCSession) {

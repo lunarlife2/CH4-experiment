@@ -33,17 +33,57 @@ class RunningSessionManager {
     private var zoneEntryTime: Date?
     private var pausedDuration: TimeInterval = 0
     private var pauseStartTime: Date?
-    var displayedTimeInZone: TimeInterval {
-        if currentZoneState == .inZone, let entryTime = zoneEntryTime {
-            return timeInZone + Date().timeIntervalSince(entryTime)
-        }
-        return timeInZone
-    }
+    
+    var displayedTimeInZone: TimeInterval = 0
+    
+    //    var displayedTimeInZone: TimeInterval {
+    //        if currentZoneState == .inZone, let entryTime = zoneEntryTime {
+    //            return timeInZone + Date().timeIntervalSince(entryTime)
+    //        }
+    //        return timeInZone
+    //    }
     
     //Health
     var healthMonitor = HealthMonitor()
     var avgPace: Double = 0
     
+    //connect ios and watchos state
+    private var isApplyingRemoteState = false
+    
+    init() {
+        ConnectivityManager.shared.onRemoteWorkoutStateChanged = { [weak self] state in
+            self?.applyRemoteState(state)
+        }
+    }
+    
+    private func applyRemoteState(_ state: String) {
+        guard sessionStartTime != nil else {
+            print("Ignoring remote state \(state) — session belum mulai")
+            return
+        }
+        isApplyingRemoteState = true
+        switch state {
+        case "paused":
+            pauseTimer()
+        case "running":
+            resumeTimer()
+        case "ended":
+            Task { await self.endSession() }
+        default:
+            break
+        }
+        isApplyingRemoteState = false
+    }
+    
+    func resetSessionState() {
+        timeInZone = 0
+        zoneEntryTime = nil
+        totalElapsedTime = 0
+        pausedDuration = 0
+        pauseStartTime = nil
+        currentZoneState = .aboveZone
+        currentZones = 1
+    }
     
     func evaluateZone() {
         let heartRate = Int(healthMonitor.heartRate)
@@ -128,7 +168,15 @@ class RunningSessionManager {
         return String(format: "%d:%02d:%02d", hours, minutes, seconds)
     }
     
+    func formatDurationText(_ interval: TimeInterval) -> String {
+        let totalSeconds = Int(interval)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        return String(format: "%d h %d m", hours, minutes)
+    }
+    
     func startSession(activityType: HKWorkoutActivityType, locationType: HKWorkoutSessionLocationType) async {
+        resetSessionState()
         if healthMonitor.session != nil {
             await healthMonitor.stopWorkout()
         }
@@ -141,11 +189,18 @@ class RunningSessionManager {
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             guard let self, let start = self.sessionStartTime else { return }
             
-            self.totalElapsedTime = Date().timeIntervalSince(start) - self.pausedDuration
+            self.totalElapsedTime = Date().timeIntervalSince(start) - pausedDuration
             
             let durationMinutes = self.totalElapsedTime / 60
             let distanceKm = self.healthMonitor.distance / 1000
             self.healthMonitor.calculatePace(durationMinutes: durationMinutes, distanceKm: distanceKm)
+            
+            if currentZoneState == .inZone,
+               let entry = zoneEntryTime {
+                displayedTimeInZone = timeInZone + Date().timeIntervalSince(entry)
+            } else {
+                displayedTimeInZone = timeInZone
+            }
             
             ConnectivityManager.shared.sendLiveMetrics(
                 heartRate: healthMonitor.heartRate,
@@ -153,7 +208,8 @@ class RunningSessionManager {
                 avgPace: healthMonitor.avgPaceFormatted,
                 distance: healthMonitor.distanceFormatted,
                 elapsedTime: totalElapsedTime,
-                timeInZone: displayedTimeInZone
+                timeInZone: displayedTimeInZone,
+                zoneSelected: selectedZones.zone
             )
         }
     }
@@ -166,6 +222,9 @@ class RunningSessionManager {
     func pauseTimer(){
         stopTimer()
         pauseStartTime = Date()
+        if !isApplyingRemoteState {
+            ConnectivityManager.shared.sendWorkoutState("paused")
+        }
     }
     
     func resumeTimer(){
@@ -174,15 +233,21 @@ class RunningSessionManager {
             pauseStartTime = nil
         }
         startTimer()
+        if !isApplyingRemoteState {
+            ConnectivityManager.shared.sendWorkoutState("running")
+        }
     }
     
     func endSession() async {
         stopTimer()
         finalizeZoneTime()
         await healthMonitor.stopWorkout()
+        if !isApplyingRemoteState {
+            ConnectivityManager.shared.sendWorkoutState("ended")
+        }
     }
 }
 
-enum ZoneState {
+nonisolated enum ZoneState {
     case belowZone, inZone, aboveZone
 }

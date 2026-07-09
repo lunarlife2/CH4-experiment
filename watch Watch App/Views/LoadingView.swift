@@ -37,6 +37,12 @@ struct LoadingView: View {
             .onAppear {
                 startCountDown()
             }
+            .task {
+                await sessionManager.startSession(
+                    activityType: sessionManager.runningType.activity,
+                    locationType: sessionManager.runningType.location
+                )
+            }
             .navigationDestination(isPresented: $isFinished) {
                 PaginationTabView()
                     .navigationBarBackButtonHidden()

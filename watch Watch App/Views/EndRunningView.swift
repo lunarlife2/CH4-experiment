@@ -20,7 +20,7 @@ struct EndRunningView: View {
             Text("Well Done!")
                 .font(.system(size: 19, weight: .semibold))
             
-            Text("You maintain in Zone 3 for 31 minutes!")
+            Text("You maintain in Zone \(sessionManager.selectedZones.zone) for \(sessionManager.formatDurationText(sessionManager.displayedTimeInZone))!")
                 .font(.system(size: 13, weight: .regular))
                 .multilineTextAlignment(.center)
         }
