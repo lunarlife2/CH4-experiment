@@ -248,7 +248,7 @@
 				DEVELOPMENT_TEAM = G9544K6AMN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = watch;
+				INFOPLIST_KEY_CFBundleDisplayName = RanUpWatch;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app reads your step count data to display daily activity.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "To record and update your health app.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -259,8 +259,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.htlteam;
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=watchos*]" = com.htlteam.RWhealthkit.watch;
+				PRODUCT_BUNDLE_IDENTIFIER = com.htlteam.RWhealthkit.watch;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = watchos;
@@ -288,7 +287,7 @@
 				DEVELOPMENT_TEAM = G9544K6AMN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = watch;
+				INFOPLIST_KEY_CFBundleDisplayName = RanUpWatch;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app reads your step count data to display daily activity.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "To record and update your health app.";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -447,6 +446,7 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = RanUp;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app reads your step count data to display daily activity.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "To record and update your health app.\n";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -464,8 +464,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.htlteam.RWhealthkit;
+				PRODUCT_BUNDLE_IDENTIFIER = com.htlteam.RWhealthkit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
@@ -500,6 +499,7 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = RanUp;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app reads your step count data to display daily activity.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "To record and update your health app.\n";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -517,8 +517,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 26.5;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.htlteam.RWhealthkit;
+				PRODUCT_BUNDLE_IDENTIFIER = com.htlteam.RWhealthkit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = YES;
