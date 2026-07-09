@@ -55,6 +55,7 @@ class RunSessionManager: NSObject, CLLocationManagerDelegate {
     
     //connect watchos and ios state
     private var isApplyingRemoteState = false
+    var isRemoteRun: Bool = false
     
     init(healthKitManager: HealthKitManager = HealthKitManager()) {
         self.healthKitManager = healthKitManager
@@ -82,6 +83,15 @@ class RunSessionManager: NSObject, CLLocationManagerDelegate {
             break
         }
         isApplyingRemoteState = false
+    }
+    
+    func startRemoteRun(type: RunType, zone: Int) {
+        runType = type
+        self.zone = zone
+        resetMetrics()
+        isRunning = true
+        isPaused = false
+        isRemoteRun = true
     }
     
     
@@ -139,6 +149,7 @@ class RunSessionManager: NSObject, CLLocationManagerDelegate {
     func endRun() {
         isRunning = false
         isPaused = false
+//        isRemoteRun = false
         timer?.invalidate()
         timer = nil
         locationManager.stopUpdatingLocation()

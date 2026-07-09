@@ -17,14 +17,11 @@ struct EndPauseView: View {
             VStack {
                 VStack {
                     Button {
-                        sessionManager.finalizeZoneTime()
-                        sessionManager.stopTimer()
-                        if !ConnectivityManager.shared.isApplyingRemoteState {
-                            ConnectivityManager.shared.sendWorkoutState("ended")
-                        }
                         Task {
-                            await sessionManager.healthMonitor.stopWorkout()
-                            navigateToEnd = true
+                            await sessionManager.endSession()
+                            await MainActor.run {
+                                navigateToEnd = true
+                            }
                         }
                     } label: {
                         Image(systemName: "xmark")
@@ -37,26 +34,28 @@ struct EndPauseView: View {
                         .padding(.bottom, 10)
                 }
                 .navigationDestination(isPresented: $navigateToEnd){
-                    EndRunningView()
+                    EndRunningView(finalTimeInZone: sessionManager.displayedTimeInZone,
+                                   selectedZone: sessionManager.selectedZones.zone)
                         .environment(sessionManager)
                 }
                 
                 VStack {
                     Button {
                         print("Pause button tapped")
+                        let willPause = sessionManager.healthMonitor.sessionState != .paused
                         sessionManager.healthMonitor.togglePause()
-                        if sessionManager.healthMonitor.sessionState == .paused {
+                        
+                        if willPause {
                             sessionManager.pauseTimer()
-                            if !ConnectivityManager.shared.isApplyingRemoteState {
-                                ConnectivityManager.shared.sendWorkoutState("paused")
-                            }
                         } else {
                             sessionManager.resumeTimer()
-                            if !ConnectivityManager.shared.isApplyingRemoteState {
-                                ConnectivityManager.shared.sendWorkoutState("resume")
-                            }
                         }
-                    } label: {
+                        
+                        if !ConnectivityManager.shared.isApplyingRemoteState {
+                            ConnectivityManager.shared.sendWorkoutState(willPause ? "paused" : "running")
+                        }
+                    }
+                    label: {
                         Image(systemName: sessionManager.healthMonitor.sessionState == .paused ? "arrow.trianglehead.clockwise" : "pause")
                     }
                     .tint(Color.yellow)
@@ -80,7 +79,6 @@ struct EndPauseView: View {
     }
     private func applyRemoteState(_ state: String) {
         ConnectivityManager.shared.isApplyingRemoteState = true
-        defer { ConnectivityManager.shared.isApplyingRemoteState = false }
         
         switch state {
         case "paused":
@@ -88,19 +86,27 @@ struct EndPauseView: View {
                 sessionManager.healthMonitor.togglePause()
                 sessionManager.pauseTimer()
             }
-        case "resume":
+            ConnectivityManager.shared.isApplyingRemoteState = false
+            
+        case "running":
             if sessionManager.healthMonitor.sessionState == .paused {
                 sessionManager.healthMonitor.togglePause()
                 sessionManager.resumeTimer()
             }
+            ConnectivityManager.shared.isApplyingRemoteState = false
+            
         case "ended":
-            sessionManager.finalizeZoneTime()
-            sessionManager.stopTimer()
             Task {
-                await sessionManager.healthMonitor.stopWorkout()
-                navigateToEnd = true
+                await sessionManager.endSession()
+                await MainActor.run {
+                    
+                    ConnectivityManager.shared.isApplyingRemoteState = false
+                    navigateToEnd = true
+                }
             }
+            
         default:
+            ConnectivityManager.shared.isApplyingRemoteState = false
             break
         }
     }

@@ -27,8 +27,7 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
     var remoteDistance: Double = 0
     var remoteElapsedTime: TimeInterval = 0
     var remoteTimeInZone: TimeInterval = 0
-    var remoteZone: Int = 1
-    
+    var remoteZoneSelected: Int = 1
     
     var zone1Min: Int = UserDefaults.standard.integer(forKey: "zone1Min")
     var zone1Max: Int = UserDefaults.standard.integer(forKey: "zone1Max")
@@ -44,6 +43,36 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
     //connect watch and ios
     var isApplyingRemoteState = false
     var onRemoteWorkoutStateChanged: ((String) -> Void)?
+    private let pendingStateKey = "pendingWorkoutState"
+    private let pendingRunTypeKey = "pendingRunTypeLocation"
+    private let pendingZoneKey = "pendingZoneSelected"
+    private var retryTimer: Timer?
+    
+    private var pendingWorkoutState: (state: String, runTypeLocation: String?, zone: Int?)? {
+        get {
+            guard let state = UserDefaults.standard.string(forKey: pendingStateKey) else { return nil }
+            let loc = UserDefaults.standard.string(forKey: pendingRunTypeKey)
+            let zone = UserDefaults.standard.object(forKey: pendingZoneKey) as? Int
+            return (state, loc, zone)
+        }
+        set {
+            if let value = newValue {
+                UserDefaults.standard.set(value.state, forKey: pendingStateKey)
+                UserDefaults.standard.set(value.runTypeLocation, forKey: pendingRunTypeKey)
+                if let zone = value.zone {
+                    UserDefaults.standard.set(zone, forKey: pendingZoneKey)
+                } else {
+                    UserDefaults.standard.removeObject(forKey: pendingZoneKey)
+                }
+            } else {
+                UserDefaults.standard.removeObject(forKey: pendingStateKey)
+                UserDefaults.standard.removeObject(forKey: pendingRunTypeKey)
+                UserDefaults.standard.removeObject(forKey: pendingZoneKey)
+            }
+        }
+    }
+    
+    
     
     override init() {
         super.init()
@@ -55,31 +84,128 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
             print("Audio session error: \(error)")
         }
         
-        if WCSession.isSupported(){
+        if WCSession.isSupported() {
             let session = WCSession.default
             session.delegate = self
             session.activate()
         }
     }
     
-    func sendWorkoutState(_ state: String) {
+    func sendWorkoutState(_ state: String, runTypeLocation: String? = nil, zone: Int? = nil) {
         let session = WCSession.default
         guard session.activationState == .activated else { return }
         
-        try? session.updateApplicationContext(["workoutState": state])
+        var payload: [String: Any] = ["workoutState": state]
+        if let runTypeLocation { payload["runTypeLocation"] = runTypeLocation }
+        if let zone { payload["zoneSelected"] = zone }
         
-        if session.isReachable {
-            session.sendMessage(
-                ["workoutState": state],
-                replyHandler: { reply in
-                    print("iOS confirmed workoutState received:", reply)
-                },
-                errorHandler: { error in
-                    print("sendWorkoutState gagal, fallback ke context:", error)
-                }
-            )
+        pendingWorkoutState = (state, runTypeLocation, zone)
+        
+        try? session.updateApplicationContext(payload)
+        
+        attemptSend(payload: payload, forState: state)
+    }
+    
+    private func attemptSend(payload: [String: Any], forState state: String) {
+        let session = WCSession.default
+        guard session.activationState == .activated else { return }
+        
+        session.sendMessage(payload, replyHandler: { [weak self] reply in
+            print("iOS confirmed workoutState received:", reply)
+            if self?.pendingWorkoutState?.state == state {
+                self?.pendingWorkoutState = nil
+            }
+            self?.stopRetryTimer()
+        }, errorHandler: { [weak self] error in
+            print("sendWorkoutState gagal, akan di-retry:", error)
+            self?.scheduleRetry()
+        })
+    }
+    
+    private func scheduleRetry() {
+        retryTimer?.invalidate()
+        retryTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
+            guard let self, let pending = self.pendingWorkoutState else {
+                self?.stopRetryTimer()
+                return
+            }
+            var payload: [String: Any] = ["workoutState": pending.state]
+            if let loc = pending.runTypeLocation { payload["runTypeLocation"] = loc }
+            if let z = pending.zone { payload["zoneSelected"] = z }
+            self.attemptSend(payload: payload, forState: pending.state)
         }
     }
+    
+    private func stopRetryTimer() {
+        retryTimer?.invalidate()
+        retryTimer = nil
+    }
+    
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
+        print("Connecting From iOS Success")
+        
+        DispatchQueue.main.async {
+            let context = session.receivedApplicationContext
+            if !context.isEmpty {
+                self.session(session, didReceiveApplicationContext: context)
+            }
+            
+            if let pending = self.pendingWorkoutState {
+                var payload: [String: Any] = ["workoutState": pending.state]
+                if let loc = pending.runTypeLocation { payload["runTypeLocation"] = loc }
+                if let z = pending.zone { payload["zoneSelected"] = z }
+                self.attemptSend(payload: payload, forState: pending.state)
+            }
+        }
+    }
+    
+    func sessionReachabilityDidChange(_ session: WCSession) {
+        if session.isReachable, let pending = pendingWorkoutState {
+            var payload: [String: Any] = ["workoutState": pending.state]
+            if let loc = pending.runTypeLocation { payload["runTypeLocation"] = loc }
+            if let z = pending.zone { payload["zoneSelected"] = z }
+            attemptSend(payload: payload, forState: pending.state)
+        }
+    }
+    
+//    override init() {
+//        super.init()
+//        
+//        do {
+//            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
+//            try AVAudioSession.sharedInstance().setActive(true)
+//        } catch {
+//            print("Audio session error: \(error)")
+//        }
+//        
+//        if WCSession.isSupported(){
+//            let session = WCSession.default
+//            session.delegate = self
+//            session.activate()
+//        }
+//    }
+    
+//    func sendWorkoutState(_ state: String, runTypeLocation: String? = nil, zone: Int? = nil) {
+//        let session = WCSession.default
+//        guard session.activationState == .activated else { return }
+//        
+//        var payload: [String: Any] = ["workoutState": state]
+//        if let runTypeLocation { payload["runTypeLocation"] = runTypeLocation }
+//        if let zone { payload["zoneSelected"] = zone }
+//        
+//        // selalu update context sebagai source of truth
+//        try? session.updateApplicationContext(payload)
+//        
+//        // coba kirim real-time TANPA syarat isReachable dulu,
+//        // biar error handler yang nentuin fallback, bukan kita skip di awal
+//        session.sendMessage(payload, replyHandler: { reply in
+//            print("iOS confirmed workoutState received:", reply)
+//        }, errorHandler: { error in
+//            print("sendMessage gagal (kemungkinan nggak reachable), fallback ke context:", error)
+//            // opsional: retry setelah delay singkat, atau retry saat reachability berubah
+//        })
+//    }
+    
     
     func sendLiveMetrics(heartRate: Double, calories: Double, avgPace: String, distance: Double, elapsedTime: TimeInterval, timeInZone: TimeInterval, zoneSelected: Int) {
         let session = WCSession.default
@@ -101,15 +227,15 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
             print("sendLiveMetrics gagal:", error)
         })
     }
-    func session(_ session: WCSession, didReceiveMessage message: [String : Any]) {
+    func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
         DispatchQueue.main.async {
             if let state = message["workoutState"] as? String {
                 self.remoteWorkoutState = state
                 self.onRemoteWorkoutStateChanged?(state)
             }
         }
+        replyHandler(["status": "received", "keys": Array(message.keys)])
     }
-    
     
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
         DispatchQueue.main.async {
@@ -160,16 +286,16 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
         synthesizer.speak(warmupUtterance)
     }
     
-    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
-        print("Connecting From iOS Success")
-        
-        DispatchQueue.main.async {
-            let context = session.receivedApplicationContext
-            if !context.isEmpty {
-                self.session(session, didReceiveApplicationContext: context)
-            }
-        }
-    }
+//    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
+//        print("Connecting From iOS Success")
+//        
+//        DispatchQueue.main.async {
+//            let context = session.receivedApplicationContext
+//            if !context.isEmpty {
+//                self.session(session, didReceiveApplicationContext: context)
+//            }
+//        }
+//    }
     
     func sendHeartRate(_ bpm: Double) {
         let session = WCSession.default

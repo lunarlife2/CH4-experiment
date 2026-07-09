@@ -32,12 +32,85 @@ class ConnectivityManager: NSObject, WCSessionDelegate{
     var remoteDistance: Double = 0
     var remoteElapsedTime: TimeInterval = 0
     var remoteTimeInZone: TimeInterval = 0
-    var remoteZone: Int = 0
+    var remoteRunTypeLocation: String = "outdoor"
+    var remoteZoneSelected: Int = 1
     
     //connect watchos and ios
     var onRemoteWorkoutStateChanged: ((String) -> Void)?
     var isApplyingRemoteState = false
     
+    private let pendingStateKey = "pendingWorkoutStateIOS"
+    private var pendingWorkoutState: String? {
+        get { UserDefaults.standard.string(forKey: pendingStateKey) }
+        set {
+            if let value = newValue {
+                UserDefaults.standard.set(value, forKey: pendingStateKey)
+            } else {
+                UserDefaults.standard.removeObject(forKey: pendingStateKey)
+            }
+        }
+    }
+    private var retryTimer: Timer?
+
+    func sendWorkoutState(_ state: String) {
+        let session = WCSession.default
+        guard session.activationState == .activated else { return }
+
+        pendingWorkoutState = state
+        try? session.updateApplicationContext(["workoutState": state])
+        attemptSend(state: state)
+    }
+
+    private func attemptSend(state: String) {
+        let session = WCSession.default
+        guard session.activationState == .activated else { return }
+
+        session.sendMessage(["workoutState": state], replyHandler: { [weak self] _ in
+            if self?.pendingWorkoutState == state {
+                self?.pendingWorkoutState = nil
+            }
+            self?.retryTimer?.invalidate()
+            self?.retryTimer = nil
+        }, errorHandler: { [weak self] error in
+            print("sendWorkoutState (iOS) gagal, akan di-retry:", error)
+            self?.scheduleRetry()
+        })
+    }
+
+    private func scheduleRetry() {
+        retryTimer?.invalidate()
+        retryTimer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { [weak self] _ in
+            guard let self, let pending = self.pendingWorkoutState else {
+                self?.retryTimer?.invalidate()
+                self?.retryTimer = nil
+                return
+            }
+            self.attemptSend(state: pending)
+        }
+    }
+
+    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
+        print("Connecting To WatchOS Success")
+        DispatchQueue.main.async {
+            self.isPaired = session.isPaired
+            self.isWatchAppInstalled = session.isWatchAppInstalled
+            self.isReachable = session.isReachable
+            self.trySendPendingContext()
+
+            if let pending = self.pendingWorkoutState {
+                self.attemptSend(state: pending)
+            }
+        }
+    }
+
+    func sessionReachabilityDidChange(_ session: WCSession) {
+        DispatchQueue.main.async {
+            self.isReachable = session.isReachable
+            if session.isReachable, let pending = self.pendingWorkoutState {
+                self.attemptSend(state: pending)
+            }
+        }
+    }
     override init() {
         super.init()
         print("ConnectivityManager init")
@@ -64,23 +137,23 @@ class ConnectivityManager: NSObject, WCSessionDelegate{
         trySendPendingContext()
     }
     
-    func sendWorkoutState(_ state: String) {
-        let session = WCSession.default
-        guard session.activationState == .activated else { return }
-
-        try? session.updateApplicationContext(["workoutState": state])
-
-        if session.isReachable {
-            session.sendMessage(
-                ["workoutState": state],
-                replyHandler: nil,
-                errorHandler: { error in
-                    print("sendWorkoutState (iOS) gagal:", error)
-                }
-            )
-        }
-    }
-    
+//    func sendWorkoutState(_ state: String) {
+//        let session = WCSession.default
+//        guard session.activationState == .activated else { return }
+//        
+//        try? session.updateApplicationContext(["workoutState": state])
+//        
+//        if session.isReachable {
+//            session.sendMessage(
+//                ["workoutState": state],
+//                replyHandler: nil,
+//                errorHandler: { error in
+//                    print("sendWorkoutState (iOS) gagal:", error)
+//                }
+//            )
+//        }
+//    }
+//    
     private func trySendPendingContext() {
         print("trySendPendingContext called")
         
@@ -99,52 +172,62 @@ class ConnectivityManager: NSObject, WCSessionDelegate{
         }
     }
     
-    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
-        print("Connecting To WatchOS Success")
-        print("Activated:", activationState == .activated)
-        print("Paired:", session.isPaired)
-        print("Installed:", session.isWatchAppInstalled)
-        print("Reachable:", session.isReachable)
-        print("Error:", error as Any)
-        
-        
-        DispatchQueue.main.async {
-            self.isPaired = session.isPaired
-            self.isWatchAppInstalled = session.isWatchAppInstalled
-            self.isReachable = session.isReachable
-            self.trySendPendingContext()
-        }
-    }
+//    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
+//        print("Connecting To WatchOS Success")
+//        print("Activated:", activationState == .activated)
+//        print("Paired:", session.isPaired)
+//        print("Installed:", session.isWatchAppInstalled)
+//        print("Reachable:", session.isReachable)
+//        print("Error:", error as Any)
+//        
+//        
+//        DispatchQueue.main.async {
+//            self.isPaired = session.isPaired
+//            self.isWatchAppInstalled = session.isWatchAppInstalled
+//            self.isReachable = session.isReachable
+//            self.trySendPendingContext()
+//        }
+//    }
     func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
         print("didReceiveMessage fired:", message)
         
         DispatchQueue.main.async {
+            if let location = message["runTypeLocation"] as? String {
+                self.remoteRunTypeLocation = location
+            }
+            
+            if let zone = message["zoneSelected"] as? Int {
+                self.remoteZoneSelected = zone
+            }
+            
             if let state = message["workoutState"] as? String {
                 self.remoteWorkoutState = state
                 self.onRemoteWorkoutStateChanged?(state)
             }
+            
             if let hr = message["heartRate"] as? Double {
                 self.remoteHeartRate = hr
             }
+            
             if let cal = message["calories"] as? Double {
                 self.remoteCalories = cal
             }
+            
             if let pace = message["avgPace"] as? String {
                 self.remoteAvgPace = pace
             }
+            
             if let dist = message["distance"] as? Double {
                 self.remoteDistance = dist
             }
-            if let elapsed = message["elapsedTime"] as? TimeInterval {
+            
+            if let elapsed = message["elapsedTime"] as? Double {
                 self.remoteElapsedTime = elapsed
             }
-            if let zoneTime = message["timeInZone"] as? TimeInterval {
+            
+            if let zoneTime = message["timeInZone"] as? Double {
                 self.remoteTimeInZone = zoneTime
-            }
-            if let zoneSelected = message["zoneSelected"] as? Int {
-                self.remoteZone = zoneSelected
-            }
-        }
+            }        }
         
         replyHandler(["status": "received", "keys": Array(message.keys)])
     }
@@ -158,11 +241,11 @@ class ConnectivityManager: NSObject, WCSessionDelegate{
         }
     }
     
-    func sessionReachabilityDidChange(_ session: WCSession) {
-        DispatchQueue.main.async {
-            self.isReachable = session.isReachable
-        }
-    }
+//    func sessionReachabilityDidChange(_ session: WCSession) {
+//        DispatchQueue.main.async {
+//            self.isReachable = session.isReachable
+//        }
+//    }
     
     
     

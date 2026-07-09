@@ -27,6 +27,7 @@ class RunningSessionManager {
     var runningType: RunningType = RunningType.running.first ?? RunningType(
         name: "Outdoor Run", icon: "figure.run", activity: .running, location: .outdoor
     )
+    
     var sessionStartTime: Date?
     var totalElapsedTime: TimeInterval = 0
     private var timer: Timer?
@@ -36,19 +37,13 @@ class RunningSessionManager {
     
     var displayedTimeInZone: TimeInterval = 0
     
-    //    var displayedTimeInZone: TimeInterval {
-    //        if currentZoneState == .inZone, let entryTime = zoneEntryTime {
-    //            return timeInZone + Date().timeIntervalSince(entryTime)
-    //        }
-    //        return timeInZone
-    //    }
-    
     //Health
     var healthMonitor = HealthMonitor()
     var avgPace: Double = 0
     
     //connect ios and watchos state
     private var isApplyingRemoteState = false
+    var isPaused: Bool = false
     
     init() {
         ConnectivityManager.shared.onRemoteWorkoutStateChanged = { [weak self] state in
@@ -68,11 +63,14 @@ class RunningSessionManager {
         case "running":
             resumeTimer()
         case "ended":
-            Task { await self.endSession() }
+            Task {
+                await self.endSession()
+                self.isApplyingRemoteState = false
+            }
+            return
         default:
             break
         }
-        isApplyingRemoteState = false
     }
     
     func resetSessionState() {
@@ -81,11 +79,13 @@ class RunningSessionManager {
         totalElapsedTime = 0
         pausedDuration = 0
         pauseStartTime = nil
-        currentZoneState = .aboveZone
+        currentZoneState = .belowZone
         currentZones = 1
     }
     
     func evaluateZone() {
+        guard !isPaused else { return }
+        
         let heartRate = Int(healthMonitor.heartRate)
         
         print("Evaluate called")
@@ -177,12 +177,24 @@ class RunningSessionManager {
     
     func startSession(activityType: HKWorkoutActivityType, locationType: HKWorkoutSessionLocationType) async {
         resetSessionState()
+        
+        healthMonitor.calories = 0
+        healthMonitor.heartRate = 0
+        healthMonitor.distance = 0
+        healthMonitor.avgPace = 0
+        healthMonitor.avgPaceFormatted = "00'00''"
+        
         if healthMonitor.session != nil {
             await healthMonitor.stopWorkout()
         }
         await healthMonitor.detectHeartRate(activityType: activityType, locationType: locationType)
         sessionStartTime = Date()
         startTimer()
+        ConnectivityManager.shared.sendWorkoutState(
+            "started",
+            runTypeLocation: runningType.location == .indoor ? "indoor" : "outdoor",
+            zone: selectedZones.zone
+        )
     }
     
     func startTimer() {
@@ -219,20 +231,38 @@ class RunningSessionManager {
         timer = nil
     }
     
-    func pauseTimer(){
+    func pauseTimer() {
         stopTimer()
+
+        if currentZoneState == .inZone,
+           let entry = zoneEntryTime {
+
+            timeInZone += Date().timeIntervalSince(entry)
+            zoneEntryTime = nil
+        }
+
         pauseStartTime = Date()
+        isPaused = true
+
         if !isApplyingRemoteState {
             ConnectivityManager.shared.sendWorkoutState("paused")
         }
     }
     
-    func resumeTimer(){
+    func resumeTimer() {
+
         if let pauseStart = pauseStartTime {
             pausedDuration += Date().timeIntervalSince(pauseStart)
             pauseStartTime = nil
         }
+
+        if currentZoneState == .inZone {
+            zoneEntryTime = Date()
+        }
+
+        isPaused = false
         startTimer()
+
         if !isApplyingRemoteState {
             ConnectivityManager.shared.sendWorkoutState("running")
         }
@@ -241,7 +271,23 @@ class RunningSessionManager {
     func endSession() async {
         stopTimer()
         finalizeZoneTime()
+        
+        displayedTimeInZone = timeInZone
+        
+        ConnectivityManager.shared.sendLiveMetrics(
+            heartRate: healthMonitor.heartRate,
+            calories: healthMonitor.calories,
+            avgPace: healthMonitor.avgPaceFormatted,
+            distance: healthMonitor.distanceFormatted,
+            elapsedTime: totalElapsedTime,
+            timeInZone: displayedTimeInZone,
+            zoneSelected: selectedZones.zone
+        )
+        
+        try? await Task.sleep(nanoseconds: 200_000_000)
+        
         await healthMonitor.stopWorkout()
+        
         if !isApplyingRemoteState {
             ConnectivityManager.shared.sendWorkoutState("ended")
         }

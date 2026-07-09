@@ -30,8 +30,8 @@ struct ActiveRunView: View {
                 distanceCard
                 
                 HStack(spacing: 14) {
-                    metricCard(title: "Duration", value: session.durationFormatted, unit: nil)
-                    metricCard(title: "Calories Burned", value: "\(Int(session.caloriesBurned))", unit: "kcal")
+                    metricCard(title: "Duration", value: durationFormatted, unit: nil)
+                    metricCard(title: "Calories Burned", value: "\(Int(displayCalories))", unit: "kcal")
                 }
                 
                 HStack(spacing: 14) {
@@ -50,13 +50,40 @@ struct ActiveRunView: View {
             }
             .padding(.horizontal, 20)
         }
+        .onChange(of: connectivity.remoteWorkoutState) { _, newState in
+            if newState == "ended" {
+                if session.isRunning {
+                    session.endRun()
+                }
+                showSummary = true
+            } else if newState == "paused" && !session.isPaused {
+                session.togglePause()
+            } else if newState == "running" && session.isPaused {
+                session.togglePause()
+            }
+        }
         .fullScreenCover(isPresented: $showSummary) {
             RunSummaryView(
-                runType: runType,
-                distanceKm: session.distanceKm,
-                duration: session.duration,
-                averagePace: session.averagePace,
-                caloriesBurned: session.caloriesBurned,
+                runType: session.isRemoteRun
+                ? (connectivity.remoteRunTypeLocation == "indoor" ? .indoor : .outdoor)
+                : session.runType,
+                
+                distanceKm: session.isRemoteRun
+                ? connectivity.remoteDistance
+                : session.distanceKm,
+                
+                duration: session.isRemoteRun
+                ? connectivity.remoteElapsedTime
+                : session.duration,
+                
+                averagePace: session.isRemoteRun
+                ? connectivity.remoteElapsedTime
+                : session.averagePace,
+                
+                caloriesBurned: session.isRemoteRun
+                ? connectivity.remoteCalories
+                : session.caloriesBurned,
+                
                 onDismiss: {
                     var transaction = Transaction()
                     transaction.disablesAnimations = true
@@ -68,13 +95,34 @@ struct ActiveRunView: View {
             )
         }
         .onAppear {
-            if !session.isRunning {
+            if !session.isRemoteRun && !session.isRunning {
                 session.startRun(type: runType, zone: zone)
             }
             
         }
     }
     
+    private var displayCalories: Double {
+        session.isRemoteRun ? connectivity.remoteCalories : session.caloriesBurned
+    }
+    
+    private var displayDistance: Double {
+        session.isRemoteRun ? connectivity.remoteDistance : session.distanceKm
+    }
+    
+    private var durationFormatted: String {
+        if session.isRemoteRun {
+            let total = Int(connectivity.remoteElapsedTime)
+            return String(format: "%02d:%02d", total / 60, total % 60)
+        }
+        return session.durationFormatted
+    }
+    
+    private var displayAveragePace: String {
+        session.isRemoteRun
+        ? connectivity.remoteAvgPace
+        : session.averagePaceFormatted
+    }
     
     private var distanceCard: some View {
         HStack(spacing: 0) {
@@ -93,7 +141,7 @@ struct ActiveRunView: View {
                     .foregroundColor(.white)
                 
                 HStack(alignment: .lastTextBaseline, spacing: 4) {
-                    Text(String(format: "%.1f", session.distanceKm))
+                    Text(String(format: "%.1f", displayDistance))
                         .font(.system(size: 44, weight: .bold))
                         .foregroundColor(.white)
                     Text("km")
@@ -141,7 +189,7 @@ struct ActiveRunView: View {
                 .foregroundColor(.white.opacity(0.6))
             
             HStack(alignment: .lastTextBaseline, spacing: 4) {
-                Text(session.averagePaceFormatted)
+                Text(displayAveragePace)
                     .font(.system(size: 26, weight: .bold))
                     .foregroundColor(.white)
                 Text("min/km")
@@ -206,7 +254,7 @@ struct ActiveRunView: View {
                 ) {
                     session.togglePause()
                     if !ConnectivityManager.shared.isApplyingRemoteState {
-                        ConnectivityManager.shared.sendWorkoutState(session.isPaused ? "paused" : "resume")
+                        ConnectivityManager.shared.sendWorkoutState(session.isPaused ? "paused" : "running")
                     }
                 }
                 
@@ -237,7 +285,7 @@ struct ActiveRunView: View {
         switch state {
         case "paused":
             if session.isRunning && !session.isPaused { session.togglePause() }
-        case "resume":
+        case "running":
             if session.isRunning && session.isPaused { session.togglePause() }
         case "ended":
             if session.isRunning {
