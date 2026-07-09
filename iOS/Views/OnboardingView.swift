@@ -9,6 +9,9 @@ struct OnboardingView: View {
 
 			case .welcome:
 				WelcomeView(vm: vm)
+				
+			case .getStarted:
+				GetStartedView(vm: vm)
 
 			case .permissions:
 				PermissionsView(vm: vm)
