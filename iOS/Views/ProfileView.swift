@@ -25,7 +25,7 @@ struct ProfileView: View {
             .ignoresSafeArea()
 
             VStack(spacing: 24) {
-                header
+//                header
                 avatarSection
 //                languageSwitcher
                 healthInfoList
@@ -33,7 +33,7 @@ struct ProfileView: View {
                 Spacer()
             }
             .padding(.horizontal, 20)
-            .padding(.top, 16)
+            .padding(.top, 50)
         }
         .preferredColorScheme(.dark)
         .onAppear {
@@ -41,29 +41,27 @@ struct ProfileView: View {
         }
     }
 
-    private var header: some View {
-        HStack {
-            Button(action: {}) {
-                Image(systemName: "chevron.left")
-                    .foregroundColor(.white)
-                    .padding(20)
-                    .background(Circle().fill(Color.white.opacity(0.08)))
-            }
-            Spacer()
-        }
-    }
+//    private var header: some View {
+//        HStack {
+//            Button(action: {}) {
+//                Image(systemName: "chevron.left")
+//                    .foregroundColor(.white)
+//                    .padding(20)
+//                    .background(Circle().fill(Color.white.opacity(0.08)))
+//            }
+//            Spacer()
+//        }
+//    }
 
     private var avatarSection: some View {
         VStack(spacing: 8) {
-            AsyncImage(url: viewModel.avatarURL) { image in
-                image.resizable().scaledToFill()
-            } placeholder: {
-                Circle().fill(Color.gray.opacity(0.3))
-            }
-            .frame(width: 110, height: 110)
-            .clipShape(Circle())
-            .overlay(Circle().stroke(Color.orange, lineWidth: 2))
-            .shadow(color: .orange.opacity(0.5), radius: 20)
+            Image("profile")
+                .resizable()
+                .scaledToFill()
+                .frame(width: 110, height: 110)
+                .clipShape(Circle())
+                .overlay(Circle().stroke(Color.orange, lineWidth: 2))
+                .shadow(color: .orange.opacity(0.5), radius: 20)
 
             Text(viewModel.name)
                 .font(.title2.bold())
@@ -187,7 +185,7 @@ struct ProfileView: View {
             .foregroundColor(.white.opacity(0.9))
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
-            .background(RoundedRectangle(cornerRadius: 20).fill(Color.secondaryDarkHover))
+            .background(RoundedRectangle(cornerRadius: 20).fill(Color.primaryDarker))
     }
 }
 

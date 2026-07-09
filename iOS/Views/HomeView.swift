@@ -40,16 +40,16 @@ struct HomeView: View {
                     ActivityCard(icon: "flame", title: "Calorie", isTappable: true) {
                         print("Calorie tapped")
                     }
-                    ActivityCard(icon: "heart", title: "Zone", isTappable: true) {
+                    ActivityCard(icon: "heart.fill", title: "Zone", isTappable: true) {
                         print("Zone tapped")
                     }
-                    StatCard(title: "Total Distance", icon: "map", value: String(format: "%.1f km", healthManager.totalDistanceKm))
-                    StatCard(title: "Total Time", icon: "clock", value: healthManager.totalTimeFormatted)
+                    StatCard(title: "Total Time", icon: "alarm.fill", value: healthManager.totalTimeFormatted)
+                    StatCard(title: "Total Distance", icon: "shoeprints.fill", value: String(format: "%.1f km", healthManager.totalDistanceKm))
                     StatCard(title: "BPM Average", icon: "waveform.path.ecg", value: "\(Int(healthManager.avgHeartRate))")
                     StatCard(title: "Pace Average", icon: "timer", value: healthManager.avgPaceFormatted)
                 }
 
-                WatchConnectedBadge(isConnected: connectivity.isReachable)
+                WatchConnectedBadge(isConnected: connectivity.isPaired)
             }
             .padding(.horizontal, 20)
             .preferredColorScheme(.dark)
