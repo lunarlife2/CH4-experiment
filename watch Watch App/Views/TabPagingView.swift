@@ -10,17 +10,17 @@ import WorkoutKit
 import HealthKit
 
 struct TabPagingView: View {
-    let running: RunningType
+    @Environment(RunningSessionManager.self) private var sessionManager
     @State var selectedTab = 0
     
     var body: some View {
         NavigationStack{
             TabView(selection: $selectedTab) {
-                ForEach(RunningType.running.indices, id: \.self) { index in
-                    let item = RunningType.running[index]
+                ForEach(RunningType.running.enumerated(), id: \.element.id) { index, item in
                     
                     NavigationLink {
-                        ZonePickerView(running: item)
+                        ZonePickerView()
+                            .environment(sessionManager)
                     } label: {
                         ZStack{
                             Circle().fill(Color.accentDarkHover)
@@ -35,6 +35,9 @@ struct TabPagingView: View {
                             
                         }
                     }
+                    .simultaneousGesture(TapGesture().onEnded({
+                        sessionManager.runningType = item
+                    }))
                     .buttonStyle(.plain)
                     .tag(index)
                 }
@@ -47,6 +50,6 @@ struct TabPagingView: View {
 }
 
 #Preview {
-    TabPagingView(running: RunningType(name: "Outdoor Run", icon: "figure.run", activity: .running, location: .outdoor))
-    
+    TabPagingView()
+        .environment(RunningSessionManager())
 }

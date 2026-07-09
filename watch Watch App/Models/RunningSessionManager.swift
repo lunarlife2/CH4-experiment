@@ -1,0 +1,188 @@
+//
+//  RunningSessionManager.swift
+//  CH4
+//
+//  Created by Yimei Winata on 08/07/26.
+//
+
+import Foundation
+import HealthKit
+import Combine
+import WatchKit
+
+@Observable
+class RunningSessionManager {
+    //Zones
+    var selectedZones: SelectedZones = SelectedZones.init(zone: 1)
+    var selectedZoneRange: HeartRateZone? {
+        ConnectivityManager.shared.allZones.first {
+            $0.zone == selectedZones.zone
+        }
+    }
+    var currentZones: Int = 1
+    var currentZoneState: ZoneState = .belowZone
+    var timeInZone: TimeInterval = 0
+    
+    //Running Type
+    var runningType: RunningType = RunningType.running.first ?? RunningType(
+        name: "Outdoor Run", icon: "figure.run", activity: .running, location: .outdoor
+    )
+    var sessionStartTime: Date?
+    var totalElapsedTime: TimeInterval = 0
+    private var timer: Timer?
+    private var zoneEntryTime: Date?
+    private var pausedDuration: TimeInterval = 0
+    private var pauseStartTime: Date?
+    var displayedTimeInZone: TimeInterval {
+        if currentZoneState == .inZone, let entryTime = zoneEntryTime {
+            return timeInZone + Date().timeIntervalSince(entryTime)
+        }
+        return timeInZone
+    }
+    
+    //Health
+    var healthMonitor = HealthMonitor()
+    var avgPace: Double = 0
+    
+    
+    func evaluateZone() {
+        let heartRate = Int(healthMonitor.heartRate)
+        
+        print("Evaluate called")
+        print("Heart Rate:", heartRate)
+        
+        if let matchedZone = ConnectivityManager.shared.allZones.first(where: {heartRate >= $0.min && heartRate <= $0.max}) {
+            currentZones = matchedZone.zone
+            print("Matched Zone:", matchedZone.zone)
+        } else {
+            print("No Zone Matched")
+        }
+        
+        let newState: ZoneState
+        
+        guard let zone = selectedZoneRange else {
+            print("Selected zone not found")
+            return
+        }
+        
+        if heartRate < zone.min {
+            newState = .belowZone
+        } else if heartRate <= zone.max {
+            newState = .inZone
+        } else {
+            newState = .aboveZone
+        }
+        
+        print("""
+        HR: \(heartRate)
+        Selected Zone: \(zone.zone)
+        Range: \(zone.min)-\(zone.max)
+        """)
+        
+        guard newState != currentZoneState else {return}
+        
+        if newState == .inZone {
+            zoneEntryTime = Date()
+        } else if currentZoneState == .inZone, let entryTime = zoneEntryTime {
+            timeInZone += Date().timeIntervalSince(entryTime)
+            zoneEntryTime = nil
+        }
+        
+        currentZoneState = newState
+        triggerHaptic(for: newState)
+    }
+    
+    private func triggerHaptic(for state: ZoneState) {
+        let repeatCount: Int
+        switch state {
+        case .belowZone:
+            repeatCount = 2
+        case .inZone:
+            repeatCount = 1
+        case .aboveZone:
+            repeatCount = 3
+        }
+        
+        for i in 0..<repeatCount {
+            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 1.0) {
+                WKInterfaceDevice.current().play(.notification)
+                print("Haptic Success Called")
+            }
+            
+        }
+        
+    }
+    
+    func finalizeZoneTime() {
+        if currentZoneState == .inZone, let entryTime = zoneEntryTime {
+            timeInZone += Date().timeIntervalSince(entryTime)
+            zoneEntryTime = nil
+        }
+    }
+    
+    func formatDuration(_ interval: TimeInterval) -> String {
+        let totalSeconds = Int(interval)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let seconds = totalSeconds % 60
+        return String(format: "%d:%02d:%02d", hours, minutes, seconds)
+    }
+    
+    func startSession(activityType: HKWorkoutActivityType, locationType: HKWorkoutSessionLocationType) async {
+        if healthMonitor.session != nil {
+            await healthMonitor.stopWorkout()
+        }
+        await healthMonitor.detectHeartRate(activityType: activityType, locationType: locationType)
+        sessionStartTime = Date()
+        startTimer()
+    }
+    
+    func startTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            guard let self, let start = self.sessionStartTime else { return }
+            
+            self.totalElapsedTime = Date().timeIntervalSince(start) - self.pausedDuration
+            
+            let durationMinutes = self.totalElapsedTime / 60
+            let distanceKm = self.healthMonitor.distance / 1000
+            self.healthMonitor.calculatePace(durationMinutes: durationMinutes, distanceKm: distanceKm)
+            
+            ConnectivityManager.shared.sendLiveMetrics(
+                heartRate: healthMonitor.heartRate,
+                calories: healthMonitor.calories,
+                avgPace: healthMonitor.avgPaceFormatted,
+                distance: healthMonitor.distanceFormatted,
+                elapsedTime: totalElapsedTime,
+                timeInZone: displayedTimeInZone
+            )
+        }
+    }
+    
+    func stopTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
+    
+    func pauseTimer(){
+        stopTimer()
+        pauseStartTime = Date()
+    }
+    
+    func resumeTimer(){
+        if let pauseStart = pauseStartTime {
+            pausedDuration += Date().timeIntervalSince(pauseStart)
+            pauseStartTime = nil
+        }
+        startTimer()
+    }
+    
+    func endSession() async {
+        stopTimer()
+        finalizeZoneTime()
+        await healthMonitor.stopWorkout()
+    }
+}
+
+enum ZoneState {
+    case belowZone, inZone, aboveZone
+}
