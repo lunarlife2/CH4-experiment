@@ -27,6 +27,8 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
     var remoteDistance: Double = 0
     var remoteElapsedTime: TimeInterval = 0
     var remoteTimeInZone: TimeInterval = 0
+    var remoteZone: Int = 1
+    
     
     var zone1Min: Int = UserDefaults.standard.integer(forKey: "zone1Min")
     var zone1Max: Int = UserDefaults.standard.integer(forKey: "zone1Max")
@@ -38,6 +40,10 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
     var zone4Max: Int = UserDefaults.standard.integer(forKey: "zone4Max")
     var zone5Min: Int = UserDefaults.standard.integer(forKey: "zone5Min")
     var zone5Max: Int = UserDefaults.standard.integer(forKey: "zone5Max")
+    
+    //connect watch and ios
+    var isApplyingRemoteState = false
+    var onRemoteWorkoutStateChanged: ((String) -> Void)?
     
     override init() {
         super.init()
@@ -75,7 +81,7 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
         }
     }
     
-    func sendLiveMetrics(heartRate: Double, calories: Double, avgPace: String, distance: Double, elapsedTime: TimeInterval, timeInZone: TimeInterval) {
+    func sendLiveMetrics(heartRate: Double, calories: Double, avgPace: String, distance: Double, elapsedTime: TimeInterval, timeInZone: TimeInterval, zoneSelected: Int) {
         let session = WCSession.default
         guard session.activationState == .activated, session.isReachable else { return }
         
@@ -85,7 +91,8 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
             "avgPace": avgPace,
             "distance": distance,
             "elapsedTime": elapsedTime,
-            "timeInZone": timeInZone
+            "timeInZone": timeInZone,
+            "zoneSelected": zoneSelected
         ]
         
         session.sendMessage(metrics, replyHandler: { reply in
@@ -98,6 +105,7 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
         DispatchQueue.main.async {
             if let state = message["workoutState"] as? String {
                 self.remoteWorkoutState = state
+                self.onRemoteWorkoutStateChanged?(state)
             }
         }
     }
@@ -126,6 +134,7 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
             
             if let state = applicationContext["workoutState"] as? String {
                 self.remoteWorkoutState = state
+                self.onRemoteWorkoutStateChanged?(state)
             }
             print("Zones Received: ", applicationContext)
         }

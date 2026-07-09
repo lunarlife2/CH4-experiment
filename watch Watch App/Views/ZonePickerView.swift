@@ -40,12 +40,7 @@ struct ZonePickerView: View {
                     Text("Start")
                         .foregroundStyle(Color.white)
                 }
-                .task {
-                    await sessionManager.startSession(
-                        activityType: sessionManager.runningType.activity,
-                        locationType: sessionManager.runningType.location
-                    )
-                }
+                
                 .tint(Color.secondaryNormal)
                 .buttonStyle(.borderedProminent)
                 .padding(.top, 10)
