@@ -1,5 +1,5 @@
 //
-//  SecondDetailZoneView.swift
+//  FirstDetailZoneView.swift
 //  watch Watch App
 //
 //  Created by Yimei Winata on 07/07/26.
@@ -7,8 +7,9 @@
 
 import SwiftUI
 
-struct SecondDetailZoneView: View {
-    let currentZone: Int
+struct FirstDetailZoneView: View {
+    @Environment(RunningSessionManager.self) private var sessionManager
+    @State private var healthMonitor = HealthMonitor()
     
     let zones: [(color: Color, label: String)] = [
         (.blue, "Zone 1"),
@@ -23,7 +24,7 @@ struct SecondDetailZoneView: View {
             HStack(spacing: 1) {
                 ForEach(zones.indices, id: \.self) { index in
                     let zone = zones[index]
-                    let isActive = (index + 1) == currentZone
+                    let isActive = (index + 1) == sessionManager.currentZones
                     
                     HStack (alignment: .firstTextBaseline, spacing: 2) {
                         if isActive {
@@ -36,46 +37,51 @@ struct SecondDetailZoneView: View {
                     }
                     .padding(isActive ? 12 : 8)
                     .frame(width: isActive ? nil : 25, height: 35)
-                    .background(RoundedRectangle(cornerRadius: 5).fill(zone.color))
-                    .animation(.easeInOut, value: currentZone)
+                    .background(RoundedRectangle(cornerRadius: 5).fill(isActive ? zone.color : zone.color.opacity(0.4)))
+                    .animation(.easeInOut, value: sessionManager.selectedZones.zone)
                 }
             }
             .padding(.bottom, 10)
             
+            HStack (alignment: .firstTextBaseline, spacing: 1) {
+                Text("\(Int(sessionManager.healthMonitor.heartRate))")
+                    .font(.system(size: 15, weight: .semibold))
+                Image(systemName: "heart.fill")
+                    .foregroundStyle(Color.red)
+                    .font(.system(size: 15))
+
+            }
+            .padding(.bottom, 10)
+            
             VStack (alignment: .leading) {
-                Text("Time in Target Zone")
+                Text("Total Time")
                     .font(.system(size: 12, weight: .light))
-                Text("0:31:09")
+                Text(sessionManager.formatDuration(sessionManager.totalElapsedTime))
                     .font(.system(size: 15, weight: .semibold))
             }
             .padding(.bottom, 10)
             
             VStack (alignment: .leading) {
-                Text("Calorie")
+                Text("Distance")
                     .font(.system(size: 12, weight: .light))
                 HStack (spacing: 0) {
-                    Text("200")
+                    Text("\(Int(sessionManager.healthMonitor.distanceFormatted))")
                         .font(.system(size: 15, weight: .semibold))
-                    Text("KCal")
+                    Text("KM")
                         .font(.system(size: 10, weight: .semibold))
                         .padding(.top, 5)
                 }
-            }
-            .padding(.bottom, 10)
-            
-            VStack (alignment: .leading) {
-                Text("Average Pace")
-                    .font(.system(size: 12, weight: .light))
-                Text("21'18''")
-                    .font(.system(size: 15, weight: .semibold))
+                
             }
             .padding(.bottom, 10)
             
         }
         .padding()
+        
     }
 }
 
 #Preview {
-    SecondDetailZoneView(currentZone: 1)
+    FirstDetailZoneView()
+        .environment(RunningSessionManager())
 }

@@ -13,7 +13,17 @@ struct ExpandingHearts: View {
     @State private var redHeartHeight: Double = 0
     @State private var redHeartOpacity: Double = 1
     let expandSizeTo: Double
-
+    
+    let zoneState: ZoneState
+    
+    private var heartColor: Color {
+        switch zoneState {
+        case .belowZone: return .yellow
+        case .inZone: return .green
+        case .aboveZone: return .red
+        }
+    }
+    
     func expandHearts() {
         withAnimation(.easeOut(duration: 3.5)) {
             redHeartWidth = expandSizeTo
@@ -23,9 +33,9 @@ struct ExpandingHearts: View {
             redHeartOpacity = 0
         }
     }
-
+    
     var body: some View {
-        ExpandingHeartView(animatingHeight: $redHeartHeight, width: $redHeartWidth, height: $redHeartWidth, color: .red)
+        ExpandingHeartView(animatingHeight: $redHeartHeight, width: $redHeartWidth, height: $redHeartWidth, color: heartColor)
             .blur(radius: 5)
             .opacity(redHeartOpacity)
             .frame(width: expandSizeTo, height: expandSizeTo)
@@ -90,5 +100,5 @@ struct HeartShape: Shape {
     }
 }
 #Preview {
-    ExpandingHearts(redHeartWidth: 100, blackHeartWidth: 100, expandSizeTo: 300)
+    ExpandingHearts(redHeartWidth: 100, blackHeartWidth: 100, expandSizeTo: 300, zoneState: .belowZone)
 }

@@ -10,27 +10,28 @@ import HealthKit
 import WorkoutKit
 
 struct PaginationTabView: View {
-    let running: RunningType
+    @Environment(RunningSessionManager.self) private var sessionManager
     @State private var mainSelection = 1
     @State private var innerSelection = 0
     
     var body: some View {
         TabView(selection: $mainSelection) {
             Tab(value: 0) {
-                EndPauseView(running: running)
+                EndPauseView()
+                    .environment(sessionManager)
             }
             
             Tab(value: 1) {
                 GeometryReader { geo in
                     ScrollView {
                         VStack(spacing: 0) {
-                            HeartBeatView(running: running)
+                            HeartBeatView()
                                 .frame(width: geo.size.width, height: geo.size.height)
                             
-                            FirstDetailZoneView(currentZone: 3)
+                            FirstDetailZoneView()
                                 .frame(width: geo.size.width, height: geo.size.height)
                             
-                            SecondDetailZoneView(currentZone: 3)
+                            SecondDetailZoneView()
                                 .frame(width: geo.size.width, height: geo.size.height)
 
                         }
@@ -47,5 +48,6 @@ struct PaginationTabView: View {
 }
 
 #Preview {
-    PaginationTabView(running: RunningType(name: "Outdoor Run", icon: "figure.run", activity: .running, location: .outdoor))
+    PaginationTabView()
+        .environment(RunningSessionManager())
 }

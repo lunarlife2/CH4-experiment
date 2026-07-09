@@ -54,7 +54,7 @@ struct ActiveRunView: View {
             RunSummaryView(
                 runType: runType,
                 distanceKm: session.distanceKm,
-                duration: session.duration,          
+                duration: session.duration,
                 averagePace: session.averagePace,
                 caloriesBurned: session.caloriesBurned,
                 onDismiss: {
@@ -192,6 +192,10 @@ struct ActiveRunView: View {
             HStack(spacing: 28) {
                 controlButton(systemName: "xmark", tint: .red.opacity(0.8), size: 84) {
                     session.endRun()
+                    
+                    if !ConnectivityManager.shared.isApplyingRemoteState {
+                        ConnectivityManager.shared.sendWorkoutState("ended")
+                    }
                     showSummary = true
                 }
                 
@@ -201,12 +205,18 @@ struct ActiveRunView: View {
                     size: 84
                 ) {
                     session.togglePause()
+                    if !ConnectivityManager.shared.isApplyingRemoteState {
+                        ConnectivityManager.shared.sendWorkoutState(session.isPaused ? "paused" : "resume")
+                    }
                 }
                 
                 controlButton(systemName: "arrow.counterclockwise", tint: .green.opacity(0.8), size: 84) {
                     session.resetRun()
                 }
             }
+        }
+        .onChange(of: ConnectivityManager.shared.remoteWorkoutState) { _, newState in
+            applyRemoteState(newState)
         }
     }
     
@@ -218,6 +228,25 @@ struct ActiveRunView: View {
                 .frame(width: size, height: size)
         }
         .glassEffect(.regular.tint(tint).interactive(), in: Circle())
+    }
+    
+    private func applyRemoteState(_ state: String) {
+        ConnectivityManager.shared.isApplyingRemoteState = true
+        defer { ConnectivityManager.shared.isApplyingRemoteState = false }
+        
+        switch state {
+        case "paused":
+            if session.isRunning && !session.isPaused { session.togglePause() }
+        case "resume":
+            if session.isRunning && session.isPaused { session.togglePause() }
+        case "ended":
+            if session.isRunning {
+                session.endRun()
+                showSummary = true
+            }
+        default:
+            break
+        }
     }
 }
 
