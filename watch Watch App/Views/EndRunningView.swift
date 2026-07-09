@@ -8,18 +8,20 @@
 import SwiftUI
 
 struct EndRunningView: View {
+    @Environment(RunningSessionManager.self) private var sessionManager
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
         VStack (alignment: .center) {
-            Image(systemName: "figure.run")
+            Image("logo-ranup-watch")
+                .resizable()
+                .frame(maxWidth: 91, maxHeight: 69)
             
             Text("Well Done!")
-                .bold()
-                .font(.system(size: 20))
+                .font(.system(size: 19, weight: .semibold))
             
             Text("You maintain in Zone 3 for 31 minutes!")
-                .font(.system(size: 12))
+                .font(.system(size: 13, weight: .regular))
                 .multilineTextAlignment(.center)
         }
         .navigationBarBackButtonHidden(true)
@@ -38,4 +40,5 @@ struct EndRunningView: View {
 
 #Preview {
     EndRunningView()
+        .environment(RunningSessionManager())
 }

@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct iOSApp: App {
 	@StateObject private var settings = UserSettings()
+    let connectivity = ConnectivityManager.shared
 
 	var body: some Scene {
 		WindowGroup {

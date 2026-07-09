@@ -18,6 +18,15 @@ struct HeartPulses: View {
     @State private var expandingHearts: [ExpandingHeart] = []
     @State private var pulseTask: Task<Void, Never>?
     
+    let zoneState: ZoneState
+    private var heartColor: Color {
+        switch zoneState {
+        case .belowZone: return .yellow
+        case .inZone: return .green
+        case .aboveZone: return .red
+        }
+    }
+    
     private func interval() -> Double {
         
         let bpm = max(40, min(healthMonitor.heartRate, 180))
@@ -77,7 +86,8 @@ struct HeartPulses: View {
                 ExpandingHearts(
                     redHeartWidth: redHeartWidth,
                     blackHeartWidth: blackHeartWidth,
-                    expandSizeTo: expandSizeTo
+                    expandSizeTo: expandSizeTo,
+                    zoneState: zoneState
                 )
                 .id(heart.id)
                 

@@ -12,6 +12,8 @@ import HealthKit
 import WorkoutKit
 
 struct PrimaryHeartPulse: View {
+    @Environment(RunningSessionManager.self) private var sessionManager
+    
     @State private var wiggleAnimate = false
     @State private var animationTask: Task<Void, Never>?
     
@@ -22,81 +24,82 @@ struct PrimaryHeartPulse: View {
     @State private var redHeartAnimatingHeight: Double = 0
     @State private var redHeartHeight: Double = 70
     
-    @State private var healthMonitor = HealthMonitor()
-    let running: RunningType
-
+    let zoneState: ZoneState
+    
+    private var heartColor: Color {
+        switch zoneState {
+        case .belowZone: return .yellow
+        case .inZone: return .green
+        case .aboveZone: return .red
+        }
+    }
     var body: some View {
         VStack {
-            HStack(spacing: 20) {
+            ZStack {
                 
-                ZStack {
-
-                    HeartPulses(
-                        redHeartWidth: baseSize,
-                        blackHeartWidth: baseSize - 5,
-                        expandSizeTo: baseSize * 3,
-                        healthMonitor: healthMonitor
-                    )
-
-                    ExpandingHeartView(
-                        animatingHeight: $redHeartAnimatingHeight,
-                        width: $redHeartWidth,
-                        height: $redHeartHeight,
-                        color: .red
-                    )
-                    .scaleEffect(wiggleAnimate ? 1.03 : 1)
-
-                    SideGlowHeart(
-                        wiggleAnimate: $wiggleAnimate,
-                        width: baseSize,
-                        height: baseSize
-                    )
-
-                    InnerShadowHeart(
-                        wiggleAnimate: $wiggleAnimate,
-                        width: baseSize - 5,
-                        height: baseSize - 5,
-                        color: .black
-                    )
-
-                    VStack {
-                        Text("\(Int(healthMonitor.heartRate))")
-                            .font(.system(size: 20))
-                            .bold()
-
-                        Text("BPM")
-                            .font(.system(size: 9))
-                            .bold()
-                    }
-                    .onAppear{
-                        Task {
-                            await healthMonitor.detectHeartRate(activityType: running.activity, locationType: running.location)
-                            
-                            animateHeartBeat()
-                        }
-                    }
-                    .onChange(of: healthMonitor.heartRate) { _, _ in
-                        animateHeartBeat()
-                    }
-                    .onDisappear {
-                        animationTask?.cancel()
-                    }
+                HeartPulses(
+                    redHeartWidth: baseSize,
+                    blackHeartWidth: baseSize - 5,
+                    expandSizeTo: baseSize * 3,
+                    healthMonitor: sessionManager.healthMonitor,
+                    zoneState: sessionManager.currentZoneState
+                )
+                
+                ExpandingHeartView(
+                    animatingHeight: $redHeartAnimatingHeight,
+                    width: $redHeartWidth,
+                    height: $redHeartHeight,
+                    color: heartColor
+                )
+                .scaleEffect(wiggleAnimate ? 1.03 : 1)
+                
+                SideGlowHeart(
+                    wiggleAnimate: $wiggleAnimate,
+                    width: baseSize,
+                    height: baseSize
+                )
+                
+                InnerShadowHeart(
+                    wiggleAnimate: $wiggleAnimate,
+                    width: baseSize - 5,
+                    height: baseSize - 5,
+                    color: .black
+                )
+                
+                VStack {
+                    Text("\(Int(sessionManager.healthMonitor.heartRate))")
+                        .font(.system(size: 20))
+                        .bold()
+                    
+                    Text("BPM")
+                        .font(.system(size: 9))
+                        .bold()
                 }
-                .frame(width: deviceWidth, height: deviceHeight)
-                
+                .onAppear{
+                    animateHeartBeat()
+                }
+                .onChange(of: sessionManager.healthMonitor.heartRate) { _, _ in
+                    animateHeartBeat()
+                    sessionManager.evaluateZone()
+                }
+                .onDisappear {
+                    animationTask?.cancel()
+                }
             }
+            .frame(width: deviceWidth, height: deviceHeight)
+            
         }
         .frame(maxWidth: .infinity, maxHeight: 100)
         .padding()
     }
     
-
+    
     private func animateHeartBeat() {
         animationTask?.cancel()
-
+        
         animationTask = Task {
             while !Task.isCancelled {
-
+                
                 await MainActor.run {
                     withAnimation(.spring(duration: 0.2, bounce: 0.8)) {
                         redHeartAnimatingHeight = 25
@@ -105,9 +108,9 @@ struct PrimaryHeartPulse: View {
                         wiggleAnimate = true
                     }
                 }
-
+                
                 try? await Task.sleep(for: .milliseconds(150))
-
+                
                 await MainActor.run {
                     withAnimation(.spring(duration: 0.4, bounce: 0.8)) {
                         wiggleAnimate = false
@@ -116,12 +119,12 @@ struct PrimaryHeartPulse: View {
                         redHeartWidth = baseSize - 5
                     }
                 }
-
-                let bpm = max(40, min(healthMonitor.heartRate, 180))
+                
+                let bpm = max(40, min(sessionManager.healthMonitor.heartRate, 180))
                 let interval = 60.0 / bpm
-
+                
                 let remain = max(interval - 0.15, 0.05)
-
+                
                 try? await Task.sleep(for: .seconds(remain))
             }
         }
@@ -129,5 +132,6 @@ struct PrimaryHeartPulse: View {
 }
 
 #Preview {
-    PrimaryHeartPulse(running: RunningType.running[0])
+    PrimaryHeartPulse(zoneState: .belowZone)
+        .environment(RunningSessionManager())
 }

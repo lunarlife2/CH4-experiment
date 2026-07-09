@@ -10,12 +10,11 @@ import HealthKit
 import WorkoutKit
 
 struct ZonePickerView: View {
-    @State private var selectedZone = "1"
-    let running: RunningType
-    let zone = ["1", "2", "3", "4", "5"]
+    @Environment(RunningSessionManager.self) private var sessionManager
+    @State private var selectedZone = 1
+    let zone = [1, 2, 3, 4, 5]
     
     var body: some View {
-        
         NavigationStack {
             VStack {
                 Text("Choose Your Zone:")
@@ -24,36 +23,49 @@ struct ZonePickerView: View {
                 
                 Picker("", selection: $selectedZone) {
                     ForEach(zone, id: \.self) { zone in
-                        Text(zone).tag(zone)
+                        Text("\(zone)").tag(zone)
                     }
                 }
                 .pickerStyle(.wheel)
                 .labelsHidden()
                 .padding(.horizontal, 15)
+                .onChange(of: selectedZone) { _, newValue in
+                    sessionManager.selectedZones = SelectedZones(zone: newValue)
+                }
                 
                 NavigationLink {
-                    LoadingView(running: running)
+                    LoadingView()
+                        .environment(sessionManager)
                 } label: {
                     Text("Start")
                         .foregroundStyle(Color.white)
+                }
+                .task {
+                    await sessionManager.startSession(
+                        activityType: sessionManager.runningType.activity,
+                        locationType: sessionManager.runningType.location
+                    )
                 }
                 .tint(Color.secondaryNormal)
                 .buttonStyle(.borderedProminent)
                 .padding(.top, 10)
             }
+            .onAppear {
+                sessionManager.selectedZones = SelectedZones(zone: selectedZone)
+            }
             .navigationBarBackButtonHidden(true)
-            .toolbar{
-                ToolbarItem(placement: .topBarTrailing){
-                    Text("\(running.name)")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Text(sessionManager.runningType.name)
                         .font(.system(size: 14))
                         .padding(.top, 20)
                 }
             }
         }
-        
     }
 }
 
 #Preview {
-    ZonePickerView(running: RunningType(name: "Outdoor Run", icon: "figure.run", activity: .running, location: .outdoor))
+    ZonePickerView()
+        .environment(RunningSessionManager())
 }

@@ -11,28 +11,18 @@ import HealthKit
 struct HomeWatchView: View {
     
     @State private var connectivity = ConnectivityManager.shared
-    @State private var healthMonitor = HealthMonitor()
+    @State private var sessionManager = RunningSessionManager()
     
     var body: some View {
         VStack {
             
-            TabPagingView(running: RunningType(name: "Outdoor Run", icon: "figure.run", activity: .running, location: .outdoor))
-            
-//            Text("Seconds: " + connectivity.receivedUserInfo)
-//                .bold()
-//            
-//            Text("\(Int(healthMonitor.heartRate)) BPM")
-//            
-//            Button("Start"){
-//                Task {
-//                    await healthMonitor.detectHeartRate(
-//                        activityType: .running,
-//                        locationType: .indoor)
-//                }
-//            }
+            TabPagingView()
+                .environment(sessionManager)
+
         }
-        .task{
-            await healthMonitor.requestAuthorization()
+        .environment(sessionManager)
+        .task {
+            await sessionManager.healthMonitor.requestAuthorization()
         }
     }
 }

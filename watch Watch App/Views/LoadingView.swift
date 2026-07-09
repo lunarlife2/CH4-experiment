@@ -9,12 +9,12 @@ import SwiftUI
 import HealthKit
 
 struct LoadingView: View {
+    @Environment(RunningSessionManager.self) private var sessionManager
     @State private var progress: CGFloat = 1
     @State private var displayText = "Ready!"
     @State private var isFinished = false
     private let totalTime = 2
     
-    let running: RunningType
         
     var body: some View {
         NavigationStack{
@@ -38,8 +38,9 @@ struct LoadingView: View {
                 startCountDown()
             }
             .navigationDestination(isPresented: $isFinished) {
-                PaginationTabView(running: running)
+                PaginationTabView()
                     .navigationBarBackButtonHidden()
+                    .environment(sessionManager)
             }
             .navigationBarBackButtonHidden(true)
         }
@@ -63,5 +64,6 @@ struct LoadingView: View {
 }
 
 #Preview {
-    LoadingView(running: RunningType(name: "Outdoor Run", icon: "figure.run", activity: .running, location: .outdoor))
+    LoadingView()
+        .environment(RunningSessionManager())
 }
