@@ -29,6 +29,7 @@ class HealthKitManager{
     var heightCM: Double?
     var weightKG: Double?
     var maxHeartRateBPM: Int?
+	var isAuthorized: Bool = false
     
     func requestAuthorization() {
         guard HKHealthStore.isHealthDataAvailable() else { return }
@@ -55,6 +56,9 @@ class HealthKitManager{
                 self.fetchAverageHeartRate()
                 self.fetchTodayWorkoutStats()
                 self.fetchProfileData()
+				Task { @MainActor in
+					self.isAuthorized = true
+				}
             }
         }
     }
