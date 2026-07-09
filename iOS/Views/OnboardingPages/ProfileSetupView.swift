@@ -42,4 +42,5 @@ struct ProfileSetupView: View {
 
 #Preview {
 	ProfileSetupView()
+		.environmentObject(UserSettings())
 }

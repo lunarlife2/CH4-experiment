@@ -20,6 +20,7 @@ struct ZonePickerView: View {
             VStack {
                 Text("Choose Your Zone:")
                     .fontWeight(.semibold)
+                    .font(.system(size: 14))
                 
                 Picker("", selection: $selectedZone) {
                     ForEach(zone, id: \.self) { zone in
@@ -33,18 +34,19 @@ struct ZonePickerView: View {
                 NavigationLink {
                     LoadingView(running: running)
                 } label: {
-                    Button {
-                        print("start button presed")
-                    } label: {
-                        Text("Start")
-                    }
-                    .padding(.top,10)
+                    Text("Start")
+                        .foregroundStyle(Color.white)
                 }
+                .tint(Color.secondaryNormal)
+                .buttonStyle(.borderedProminent)
+                .padding(.top, 10)
             }
+            .navigationBarBackButtonHidden(true)
             .toolbar{
                 ToolbarItem(placement: .topBarTrailing){
                     Text("\(running.name)")
-                        
+                        .font(.system(size: 14))
+                        .padding(.top, 20)
                 }
             }
         }

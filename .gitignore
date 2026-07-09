@@ -18,6 +18,7 @@ build/
 *.ipa
 *.dSYM.zip
 *.dSYM
+Config.xcconfig
 
 # --- Swift Package Manager ---
 .build/
@@ -49,3 +50,4 @@ fastlane/test_output
 *.swp
 .idea/
 .vscode/
+Config.xcconfig

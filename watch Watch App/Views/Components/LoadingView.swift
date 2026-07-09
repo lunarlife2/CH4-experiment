@@ -15,7 +15,7 @@ struct LoadingView: View {
     private let totalTime = 2
     
     let running: RunningType
-    
+        
     var body: some View {
         NavigationStack{
             ZStack {
@@ -24,22 +24,24 @@ struct LoadingView: View {
                 
                 Circle()
                     .trim(from: 0, to: progress)
-                    .stroke(Color.orange, style: StrokeStyle(lineWidth: 17, lineCap: .round))
+                    .stroke(Color.secondaryNormal, style: StrokeStyle(lineWidth: 17, lineCap: .round))
                     .rotationEffect(.degrees(-90))
                     .animation(.linear(duration: 0.5), value: progress)
                 
                 Text(displayText)
                     .bold()
                     .animation(nil, value: displayText)
+                    .foregroundStyle(Color.secondaryNormal)
                 
             }
             .onAppear {
                 startCountDown()
             }
             .navigationDestination(isPresented: $isFinished) {
-                HeartBeatView()
+                PaginationTabView(running: running)
                     .navigationBarBackButtonHidden()
             }
+            .navigationBarBackButtonHidden(true)
         }
     }
     
