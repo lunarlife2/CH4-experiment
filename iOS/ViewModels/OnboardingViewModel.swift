@@ -25,6 +25,7 @@ class OnboardingViewModel: ObservableObject {
 
 	enum Step {
 		case welcome
+		case getStarted
 		case permissions
 		case profile
 		case finish
@@ -35,6 +36,8 @@ class OnboardingViewModel: ObservableObject {
 	func next() {
 		switch step {
 		case .welcome:
+			step = .getStarted
+		case .getStarted:
 			step = .permissions
 		case .permissions:
 			step = .profile

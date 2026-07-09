@@ -1,17 +1,16 @@
 //
-//  PermissionsView.swift
+//  GetStartedView.swift
 //  CH4
 //
-//  Created by Averina on 07/07/26.
+//  Created by Averina on 08/07/26.
 //
 
-import Combine
 import SwiftUI
+import Combine
 
-struct PermissionsView: View {
+struct GetStartedView: View {
 	@StateObject var vm = OnboardingViewModel()
-	@State private var healthManager = HealthKitManager()
-
+	
 	var body: some View {
 		ZStack {
 			LinearGradient(
@@ -26,31 +25,42 @@ struct PermissionsView: View {
 			.ignoresSafeArea()
 			
 			VStack (spacing: 10) {
-				Image(.healthApp)
-					.resizable()
-					.scaledToFit()
-					.frame(width: 100, height: 100)
-					.padding()
-
-				Text("Automatically sync your readings with Apple Health")
-					.font(.system(size: 40, weight: .semibold))
+				HStack (spacing: 0) {
+					Text("Welcome to Ran Up")
+						.font(.system(size: 48, weight: .semibold))
+						.multilineTextAlignment(.leading)
+						.foregroundStyle(Color.white)
+						.frame(maxWidth: .infinity, alignment: .leading)
+						
+					Image(.runningMan)
+						.resizable()
+						.scaledToFit()
+						.frame(width: 130, height: 130)
+				}
+				.frame(height: 130)
+				.padding()
+				
+				
+				Text("Let's Run, Sync Heart Rate, Track Progress")
+					.font(.system(size: 16, weight: .semibold))
 					.foregroundStyle(Color.white)
-					.multilineTextAlignment(.center)
 					.padding()
 				
-								
-				Text("We need access to your health data to get started")
+				Image(.watch)
+					.resizable()
+					.scaledToFit()
+					.padding(.vertical)
+				
+				Text("Your personal running companion to understand your heart rate, stay active, and build healthier habits")
 					.font(.system(size: 16, weight: .semibold))
 					.foregroundStyle(Color.white)
 					.multilineTextAlignment(.center)
 					.padding()
 				
-				Spacer()
-				
 				Button {
-					healthManager.requestAuthorization()
+					vm.next()
 				} label: {
-					Text("Sync now")
+					Text("Get Started")
 						.frame(width: 225)
 						.font(.system(size: 22, weight: .semibold))
 						.padding(.vertical, 10)
@@ -58,28 +68,12 @@ struct PermissionsView: View {
 				.buttonStyle(.glassProminent)
 				.tint(Color.secondaryNormal)
 				.padding()
-				.onChange(of: healthManager.isAuthorized) { _, newValue in
-					if newValue {
-						vm.next()
-					}
-				}
-				
-				Button {
-					vm.next()
-				} label: {
-					Text("Skip for now")
-						.font(.system(size: 22, weight: .semibold))
-				}
-				.buttonStyle(.borderless)
-				.tint(Color.secondaryNormal)
 			}
 			.padding()
 		}
 	}
-
 }
 
 #Preview {
-	PermissionsView()
+	GetStartedView()
 }
-//
