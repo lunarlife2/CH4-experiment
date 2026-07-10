@@ -10,7 +10,8 @@ import HealthKit
 import WorkoutKit
 
 struct ZonePickerView: View {
-    @Environment(RunningSessionManager.self) private var sessionManager
+//    @Environment(RunningSessionManager.self) private var sessionManager
+    @State private var sessionManager = RunningSessionManager.shared
     @State private var selectedZone = 1
     let zone = [1, 2, 3, 4, 5]
     
@@ -62,5 +63,5 @@ struct ZonePickerView: View {
 
 #Preview {
     ZonePickerView()
-        .environment(RunningSessionManager())
+        .environment(RunningSessionManager.shared)
 }

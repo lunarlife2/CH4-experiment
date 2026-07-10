@@ -12,6 +12,8 @@ import WatchKit
 
 @Observable
 class RunningSessionManager {
+    static let shared = RunningSessionManager()
+    
     //Zones
     var selectedZones: SelectedZones = SelectedZones.init(zone: 1)
     var selectedZoneRange: HeartRateZone? {
@@ -44,6 +46,12 @@ class RunningSessionManager {
     //connect ios and watchos state
     private var isApplyingRemoteState = false
     var isPaused: Bool = false
+    private var isEnding = false
+    var sessionDidEnd: Bool = false
+    var finalTimeInZone: TimeInterval = 0
+    var finalZone: Int = 1
+    var onSessionEnded: (() -> Void)?
+    private var currentSessionID: UUID?
     
     init() {
         ConnectivityManager.shared.onRemoteWorkoutStateChanged = { [weak self] state in
@@ -52,6 +60,9 @@ class RunningSessionManager {
     }
     
     private func applyRemoteState(_ state: String) {
+        print("RunningSessionManager.applyRemoteState called with:", state, "sessionStartTime:", sessionStartTime as Any)
+        
+        
         guard sessionStartTime != nil else {
             print("Ignoring remote state \(state) — session belum mulai")
             return
@@ -81,6 +92,7 @@ class RunningSessionManager {
         pauseStartTime = nil
         currentZoneState = .belowZone
         currentZones = 1
+        sessionDidEnd = false
     }
     
     func evaluateZone() {
@@ -172,11 +184,20 @@ class RunningSessionManager {
         let totalSeconds = Int(interval)
         let hours = totalSeconds / 3600
         let minutes = (totalSeconds % 3600) / 60
-        return String(format: "%d h %d m", hours, minutes)
+        let seconds = totalSeconds % 60
+        
+        if hours > 0 {
+            return String(format: "%d h %d m", hours, minutes)
+        } else if minutes > 0 {
+            return String(format: "%d m %d s", minutes, seconds)
+        } else {
+            return String(format: "%d s", seconds)
+        }
     }
-    
     func startSession(activityType: HKWorkoutActivityType, locationType: HKWorkoutSessionLocationType) async {
         resetSessionState()
+        currentSessionID = UUID()
+        let thisSessionID = currentSessionID
         
         healthMonitor.calories = 0
         healthMonitor.heartRate = 0
@@ -233,46 +254,56 @@ class RunningSessionManager {
     
     func pauseTimer() {
         stopTimer()
-
+        
         if currentZoneState == .inZone,
            let entry = zoneEntryTime {
-
+            
             timeInZone += Date().timeIntervalSince(entry)
             zoneEntryTime = nil
         }
-
+        
         pauseStartTime = Date()
         isPaused = true
-
+        
         if !isApplyingRemoteState {
             ConnectivityManager.shared.sendWorkoutState("paused")
         }
     }
     
     func resumeTimer() {
-
+        
         if let pauseStart = pauseStartTime {
             pausedDuration += Date().timeIntervalSince(pauseStart)
             pauseStartTime = nil
         }
-
+        
         if currentZoneState == .inZone {
             zoneEntryTime = Date()
         }
-
+        
         isPaused = false
         startTimer()
-
+        
         if !isApplyingRemoteState {
             ConnectivityManager.shared.sendWorkoutState("running")
         }
     }
     
     func endSession() async {
+        guard !isEnding else {
+            print("endSession() dipanggil lagi, diabaikan")
+            return
+        }
+        isEnding = true
+        defer { isEnding = false }
+        
         stopTimer()
         finalizeZoneTime()
         
         displayedTimeInZone = timeInZone
+        finalTimeInZone = timeInZone
+        finalZone = selectedZones.zone
+        print("endSession - timeInZone:", timeInZone, "zone:", selectedZones.zone)
         
         ConnectivityManager.shared.sendLiveMetrics(
             heartRate: healthMonitor.heartRate,
@@ -288,6 +319,12 @@ class RunningSessionManager {
         
         await healthMonitor.stopWorkout()
         
+        sessionDidEnd = true
+        print("sessionDidEnd set to true, displayedTimeInZone:", displayedTimeInZone)
+        await MainActor.run {
+            onSessionEnded?()
+        }
+        
         if !isApplyingRemoteState {
             ConnectivityManager.shared.sendWorkoutState("ended")
         }
@@ -296,4 +333,10 @@ class RunningSessionManager {
 
 nonisolated enum ZoneState {
     case belowZone, inZone, aboveZone
+}
+
+enum WatchRoute: Hashable {
+    case zonePicker
+    case loading
+    case pagination
 }

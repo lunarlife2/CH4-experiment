@@ -57,15 +57,26 @@ class ConnectivityManager: NSObject, WCSessionDelegate{
         guard session.activationState == .activated else { return }
 
         pendingWorkoutState = state
-        try? session.updateApplicationContext(["workoutState": state])
+        
+        var context = session.receivedApplicationContext.isEmpty
+            ? (try? session.applicationContext) ?? [:]
+            : session.receivedApplicationContext
+        context["workoutState"] = state
+        try? session.updateApplicationContext(context)
+        
         attemptSend(state: state)
     }
 
     private func attemptSend(state: String) {
         let session = WCSession.default
-        guard session.activationState == .activated else { return }
+        guard session.activationState == .activated else {
+            print("attemptSend skipped — session not activated")
+            return
+        }
+        print("📤 attemptSend called, state:", state, "isReachable:", session.isReachable)
 
-        session.sendMessage(["workoutState": state], replyHandler: { [weak self] _ in
+        session.sendMessage(["workoutState": state], replyHandler: { [weak self] reply in
+            print("iOS sendWorkoutState CONFIRMED:", reply)
             if self?.pendingWorkoutState == state {
                 self?.pendingWorkoutState = nil
             }

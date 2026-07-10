@@ -11,14 +11,17 @@ import HealthKit
 struct HomeWatchView: View {
     
     @State private var connectivity = ConnectivityManager.shared
-    @State private var sessionManager = RunningSessionManager()
+    //    @State private var sessionManager = RunningSessionManager()
+    @State private var sessionManager = RunningSessionManager.shared
+    @State private var path = NavigationPath()
+    @State private var showEndRunning = false
     
     var body: some View {
         VStack {
             
             TabPagingView()
                 .environment(sessionManager)
-
+            
         }
         .environment(sessionManager)
         .task {

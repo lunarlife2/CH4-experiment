@@ -9,20 +9,18 @@ import SwiftUI
 import HealthKit
 
 struct EndRunningView: View {
-    @Environment(RunningSessionManager.self) private var sessionManager
+//    @Environment(RunningSessionManager.self) private var sessionManager
     @Environment(\.dismiss) var dismiss
+    @State private var sessionManager = RunningSessionManager.shared
     
     let finalTimeInZone: TimeInterval
     let selectedZone: Int
     
     var body: some View {
+        let _ = print("🔵 EndRunningView body - finalTimeInZone:", finalTimeInZone, "zone:", selectedZone)
         VStack (alignment: .center) {
-            Image("logo-ranup-watch")
-                .resizable()
-                .frame(maxWidth: 91, maxHeight: 69)
-            
             Text("Well Done!")
-                .font(.system(size: 19, weight: .semibold))
+                .font(.system(size: 23, weight: .semibold))
             
             Text("You maintain in Zone \(selectedZone) for \(sessionManager.formatDurationText(finalTimeInZone))!")
                 .font(.system(size: 13, weight: .regular))
@@ -44,5 +42,5 @@ struct EndRunningView: View {
 
 #Preview {
     EndRunningView(finalTimeInZone: 1200, selectedZone: 1)
-        .environment(RunningSessionManager())
+        .environment(RunningSessionManager.shared)
 }

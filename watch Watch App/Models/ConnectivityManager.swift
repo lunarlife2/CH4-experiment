@@ -47,6 +47,7 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
     private let pendingRunTypeKey = "pendingRunTypeLocation"
     private let pendingZoneKey = "pendingZoneSelected"
     private var retryTimer: Timer?
+    private var lastAppliedRemoteState: String?
     
     private var pendingWorkoutState: (state: String, runTypeLocation: String?, zone: Int?)? {
         get {
@@ -168,43 +169,43 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
         }
     }
     
-//    override init() {
-//        super.init()
-//        
-//        do {
-//            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
-//            try AVAudioSession.sharedInstance().setActive(true)
-//        } catch {
-//            print("Audio session error: \(error)")
-//        }
-//        
-//        if WCSession.isSupported(){
-//            let session = WCSession.default
-//            session.delegate = self
-//            session.activate()
-//        }
-//    }
+    //    override init() {
+    //        super.init()
+    //
+    //        do {
+    //            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.duckOthers])
+    //            try AVAudioSession.sharedInstance().setActive(true)
+    //        } catch {
+    //            print("Audio session error: \(error)")
+    //        }
+    //
+    //        if WCSession.isSupported(){
+    //            let session = WCSession.default
+    //            session.delegate = self
+    //            session.activate()
+    //        }
+    //    }
     
-//    func sendWorkoutState(_ state: String, runTypeLocation: String? = nil, zone: Int? = nil) {
-//        let session = WCSession.default
-//        guard session.activationState == .activated else { return }
-//        
-//        var payload: [String: Any] = ["workoutState": state]
-//        if let runTypeLocation { payload["runTypeLocation"] = runTypeLocation }
-//        if let zone { payload["zoneSelected"] = zone }
-//        
-//        // selalu update context sebagai source of truth
-//        try? session.updateApplicationContext(payload)
-//        
-//        // coba kirim real-time TANPA syarat isReachable dulu,
-//        // biar error handler yang nentuin fallback, bukan kita skip di awal
-//        session.sendMessage(payload, replyHandler: { reply in
-//            print("iOS confirmed workoutState received:", reply)
-//        }, errorHandler: { error in
-//            print("sendMessage gagal (kemungkinan nggak reachable), fallback ke context:", error)
-//            // opsional: retry setelah delay singkat, atau retry saat reachability berubah
-//        })
-//    }
+    //    func sendWorkoutState(_ state: String, runTypeLocation: String? = nil, zone: Int? = nil) {
+    //        let session = WCSession.default
+    //        guard session.activationState == .activated else { return }
+    //
+    //        var payload: [String: Any] = ["workoutState": state]
+    //        if let runTypeLocation { payload["runTypeLocation"] = runTypeLocation }
+    //        if let zone { payload["zoneSelected"] = zone }
+    //
+    //        // selalu update context sebagai source of truth
+    //        try? session.updateApplicationContext(payload)
+    //
+    //        // coba kirim real-time TANPA syarat isReachable dulu,
+    //        // biar error handler yang nentuin fallback, bukan kita skip di awal
+    //        session.sendMessage(payload, replyHandler: { reply in
+    //            print("iOS confirmed workoutState received:", reply)
+    //        }, errorHandler: { error in
+    //            print("sendMessage gagal (kemungkinan nggak reachable), fallback ke context:", error)
+    //            // opsional: retry setelah delay singkat, atau retry saat reachability berubah
+    //        })
+    //    }
     
     
     func sendLiveMetrics(heartRate: Double, calories: Double, avgPace: String, distance: Double, elapsedTime: TimeInterval, timeInZone: TimeInterval, zoneSelected: Int) {
@@ -230,14 +231,15 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
     func session(_ session: WCSession, didReceiveMessage message: [String : Any], replyHandler: @escaping ([String : Any]) -> Void) {
         DispatchQueue.main.async {
             if let state = message["workoutState"] as? String {
+                print("Watch received workoutState message:", state)
                 self.remoteWorkoutState = state
                 self.onRemoteWorkoutStateChanged?(state)
-            }
-        }
+            }        }
         replyHandler(["status": "received", "keys": Array(message.keys)])
     }
     
     func session(_ session: WCSession, didReceiveApplicationContext applicationContext: [String : Any]) {
+        
         DispatchQueue.main.async {
             let defaults = UserDefaults.standard
             
@@ -246,7 +248,6 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
                     defaults.set(intValue, forKey: key)
                 }
             }
-            
             self.zone1Min = applicationContext["zone1Min"] as? Int ?? self.zone1Min
             self.zone1Max = applicationContext["zone1Max"] as? Int ?? self.zone1Max
             self.zone2Min = applicationContext["zone2Min"] as? Int ?? self.zone2Min
@@ -259,6 +260,7 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
             self.zone5Max = applicationContext["zone5Max"] as? Int ?? self.zone5Max
             
             if let state = applicationContext["workoutState"] as? String {
+                print("Watch received workoutState context:", state)
                 self.remoteWorkoutState = state
                 self.onRemoteWorkoutStateChanged?(state)
             }
@@ -286,16 +288,16 @@ class ConnectivityManager: NSObject, WCSessionDelegate {
         synthesizer.speak(warmupUtterance)
     }
     
-//    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
-//        print("Connecting From iOS Success")
-//        
-//        DispatchQueue.main.async {
-//            let context = session.receivedApplicationContext
-//            if !context.isEmpty {
-//                self.session(session, didReceiveApplicationContext: context)
-//            }
-//        }
-//    }
+    //    func session(_ session: WCSession, activationDidCompleteWith activationState: WCSessionActivationState, error: (any Error)?) {
+    //        print("Connecting From iOS Success")
+    //
+    //        DispatchQueue.main.async {
+    //            let context = session.receivedApplicationContext
+    //            if !context.isEmpty {
+    //                self.session(session, didReceiveApplicationContext: context)
+    //            }
+    //        }
+    //    }
     
     func sendHeartRate(_ bpm: Double) {
         let session = WCSession.default

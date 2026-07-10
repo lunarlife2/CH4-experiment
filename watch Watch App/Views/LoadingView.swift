@@ -9,7 +9,8 @@ import SwiftUI
 import HealthKit
 
 struct LoadingView: View {
-    @Environment(RunningSessionManager.self) private var sessionManager
+//    @Environment(RunningSessionManager.self) private var sessionManager
+    @State private var sessionManager = RunningSessionManager.shared
     @State private var progress: CGFloat = 1
     @State private var displayText = "Ready!"
     @State private var isFinished = false

@@ -10,7 +10,8 @@ import WorkoutKit
 import HealthKit
 
 struct TabPagingView: View {
-    @Environment(RunningSessionManager.self) private var sessionManager
+//    @Environment(RunningSessionManager.self) private var sessionManager
+    @State private var sessionManager = RunningSessionManager.shared
     @State var selectedTab = 0
     
     var body: some View {
@@ -51,5 +52,5 @@ struct TabPagingView: View {
 
 #Preview {
     TabPagingView()
-        .environment(RunningSessionManager())
+        .environment(RunningSessionManager.shared)
 }

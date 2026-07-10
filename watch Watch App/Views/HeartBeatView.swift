@@ -9,8 +9,8 @@ import SwiftUI
 import HealthKit
 
 struct HeartBeatView: View {
-    @Environment(RunningSessionManager.self) private var sessionManager
-    
+//    @Environment(RunningSessionManager.self) private var sessionManager
+    @State private var sessionManager = RunningSessionManager.shared
     @State private var healthMonitor = HealthMonitor()
     
     var body: some View {
@@ -53,5 +53,5 @@ struct HeartBeatView: View {
 
 #Preview {
     HeartBeatView()
-        .environment(RunningSessionManager())
+        .environment(RunningSessionManager.shared)
 }

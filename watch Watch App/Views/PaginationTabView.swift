@@ -49,5 +49,5 @@ struct PaginationTabView: View {
 
 #Preview {
     PaginationTabView()
-        .environment(RunningSessionManager())
+        .environment(RunningSessionManager.shared)
 }

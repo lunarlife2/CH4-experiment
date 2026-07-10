@@ -8,14 +8,15 @@
 import SwiftUI
 
 struct SecondDetailZoneView: View {
-    @Environment(RunningSessionManager.self) private var sessionManager
+//    @Environment(RunningSessionManager.self) private var sessionManager
+    @State private var sessionManager = RunningSessionManager.shared
     @State private var healthMonitor = HealthMonitor()
     
     let zones: [(color: Color, label: String)] = [
         (.blue, "Zone 1"),
         (.green, "Zone 2"),
         (.yellow, "Zone 3"),
-        (.brown, "Zone 4"),
+        (.orange, "Zone 4"),
         (.red, "Zone 5")
     ]
     
@@ -79,5 +80,5 @@ struct SecondDetailZoneView: View {
 
 #Preview {
     SecondDetailZoneView()
-        .environment(RunningSessionManager())
+        .environment(RunningSessionManager.shared)
 }

@@ -9,9 +9,12 @@ import SwiftUI
 import HealthKit
 
 struct EndPauseView: View {
-    @Environment(RunningSessionManager.self) private var sessionManager
+    //    @Environment(RunningSessionManager.self) private var sessionManager
     @State private var navigateToEnd = false
+    @State private var sessionManager = RunningSessionManager.shared
     
+    @State private var capturedTimeInZone: TimeInterval = 0
+    @State private var capturedZone: Int = 1
     var body: some View {
         NavigationStack {
             VStack {
@@ -20,7 +23,10 @@ struct EndPauseView: View {
                         Task {
                             await sessionManager.endSession()
                             await MainActor.run {
+                                capturedTimeInZone = sessionManager.displayedTimeInZone
+                                capturedZone = sessionManager.selectedZones.zone
                                 navigateToEnd = true
+                                
                             }
                         }
                     } label: {
@@ -36,7 +42,7 @@ struct EndPauseView: View {
                 .navigationDestination(isPresented: $navigateToEnd){
                     EndRunningView(finalTimeInZone: sessionManager.displayedTimeInZone,
                                    selectedZone: sessionManager.selectedZones.zone)
-                        .environment(sessionManager)
+                    .environment(sessionManager)
                 }
                 
                 VStack {
@@ -72,8 +78,18 @@ struct EndPauseView: View {
                         .font(.system(size: 14))
                 }
             }
-            .onChange(of: ConnectivityManager.shared.remoteWorkoutState) { _, newState in
-                applyRemoteState(newState)
+        }
+        .onAppear {
+            if sessionManager.sessionDidEnd {
+                navigateToEnd = true
+            }
+        }
+        .onDisappear {
+            print("EndPauseView dissapear")
+        }
+        .onChange(of: sessionManager.sessionDidEnd) { _, ended in
+            if ended {
+                navigateToEnd = true
             }
         }
     }
@@ -95,16 +111,6 @@ struct EndPauseView: View {
             }
             ConnectivityManager.shared.isApplyingRemoteState = false
             
-        case "ended":
-            Task {
-                await sessionManager.endSession()
-                await MainActor.run {
-                    
-                    ConnectivityManager.shared.isApplyingRemoteState = false
-                    navigateToEnd = true
-                }
-            }
-            
         default:
             ConnectivityManager.shared.isApplyingRemoteState = false
             break
@@ -115,5 +121,5 @@ struct EndPauseView: View {
 
 #Preview {
     EndPauseView()
-        .environment(RunningSessionManager())
+        .environment(RunningSessionManager.shared)
 }

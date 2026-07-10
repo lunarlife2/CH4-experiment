@@ -59,21 +59,12 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A03501272FEE2EAF008173B7"
-            BuildableName = "CH4.app"
-            BlueprintName = "CH4"
-            ReferencedContainer = "container:CH4.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
             BlueprintIdentifier = "1F150E4E2FF53A7000280870"
             BuildableName = "watch Watch App.app"
             BlueprintName = "watch Watch App"
             ReferencedContainer = "container:CH4.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
