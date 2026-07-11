@@ -31,3 +31,5 @@ We are HLTeam, a passionate group of innovators dedicated to creating meaningful
 # The Tech Report Link
 https://docs.zoom.us/doc/rLLb5QSJTPaqzRAK-1qcJA
 
+# Design Guideline Link
+https://www.figma.com/design/hEXR54Vl7bvOOQiDY3LrGP/CH4?node-id=193-5649
