@@ -12,8 +12,8 @@ import Observation
 @Observable
 class ProfileViewModel {
 
-    var name: String
-    var email: String
+//    var name: String
+//    var email: String
     var avatarURL: URL?
 //    var selectedLanguage: AppLanguage
 
@@ -21,15 +21,14 @@ class ProfileViewModel {
 //    private let localizationManager: LocalizationManager
 
     init(
-        name: String,
-        email: String,
-        avatarURL: URL? = nil,
+//        name: String,
+//        email: String,
+//        avatarURL: URL? = nil,
         healthManager: HealthKitManager,
 //        localizationManager: LocalizationManager = .shared
     ) {
-        self.name = name
-        self.email = email
-        self.avatarURL = avatarURL
+//        self.name = name
+//        self.email = email
         self.healthManager = healthManager
 //        self.localizationManager = localizationManager
 //        self.selectedLanguage = localizationManager.currentLanguage

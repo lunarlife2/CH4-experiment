@@ -26,8 +26,8 @@ struct RootView: View {
         let sharedHealthManager = HealthKitManager()
         _healthManager = State(wrappedValue: sharedHealthManager)
         _profileViewModel = State(wrappedValue: ProfileViewModel(
-            name: "Xera Kenedy",
-            email: "xeraKen.edit@icoud.com",
+//            name: "Xera Kenedy",
+//            email: "xeraKen.edit@icoud.com",
             healthManager: sharedHealthManager
         ))
     }

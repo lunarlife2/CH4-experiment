@@ -24,10 +24,14 @@ struct ProfileView: View {
             )
             .ignoresSafeArea()
 
-            VStack(spacing: 24) {
+            VStack(alignment: .leading, spacing: 24) {
 //                header
-                avatarSection
+//                avatarSection
 //                languageSwitcher
+                Text("Health Info")
+                    .font(.system(size: 40, weight: .semibold))
+                    .foregroundColor(.white)
+                    .padding(.bottom, 20)
                 healthInfoList
                 syncedBadge
                 Spacer()
@@ -41,37 +45,26 @@ struct ProfileView: View {
         }
     }
 
-//    private var header: some View {
-//        HStack {
-//            Button(action: {}) {
-//                Image(systemName: "chevron.left")
-//                    .foregroundColor(.white)
-//                    .padding(20)
-//                    .background(Circle().fill(Color.white.opacity(0.08)))
-//            }
-//            Spacer()
+
+//    private var avatarSection: some View {
+//        VStack(spacing: 8) {
+//            Image("profile")
+//                .resizable()
+//                .scaledToFill()
+//                .frame(width: 110, height: 110)
+//                .clipShape(Circle())
+//                .overlay(Circle().stroke(Color.orange, lineWidth: 2))
+//                .shadow(color: .orange.opacity(0.5), radius: 20)
+//
+//            Text(viewModel.name)
+//                .font(.title2.bold())
+//                .foregroundColor(.white)
+//
+//            Text(viewModel.email)
+//                .font(.subheadline)
+//                .foregroundColor(.orange)
 //        }
 //    }
-
-    private var avatarSection: some View {
-        VStack(spacing: 8) {
-            Image("profile")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 110, height: 110)
-                .clipShape(Circle())
-                .overlay(Circle().stroke(Color.orange, lineWidth: 2))
-                .shadow(color: .orange.opacity(0.5), radius: 20)
-
-            Text(viewModel.name)
-                .font(.title2.bold())
-                .foregroundColor(.white)
-
-            Text(viewModel.email)
-                .font(.subheadline)
-                .foregroundColor(.orange)
-        }
-    }
 
 //    private var languageSwitcher: some View {
 //        HStack(spacing: 0) {
@@ -100,7 +93,7 @@ struct ProfileView: View {
         VStack(spacing: 0) {
             HStack {
                 Text("Age")
-                    .font(.system(size: 17))
+                    .font(.system(size: 20))
                     .foregroundColor(.white.opacity(0.8))
                 
                 Spacer()
@@ -110,7 +103,7 @@ struct ProfileView: View {
                         .font(.system(size: 22, weight: .bold))
                         .foregroundColor(.white)
                     Text("Year")
-                        .font(.system(size: 18, weight:.semibold))
+                        .font(.system(size: 20, weight:.semibold))
                         .foregroundColor(.white)
                 }
             }
@@ -120,7 +113,7 @@ struct ProfileView: View {
 
             HStack {
                 Text("Height")
-                    .font(.system(size: 17))
+                    .font(.system(size: 20))
                     .foregroundColor(.white.opacity(0.8))
                 
                 Spacer()
@@ -130,7 +123,7 @@ struct ProfileView: View {
                         .font(.system(size: 22, weight: .bold))
                         .foregroundColor(.white)
                     Text("cm")
-                        .font(.system(size: 18, weight:.semibold))
+                        .font(.system(size: 20, weight:.semibold))
                         .foregroundColor(.white)
                 }
             }
@@ -140,7 +133,7 @@ struct ProfileView: View {
 
             HStack {
                 Text("Weight")
-                    .font(.system(size: 17))
+                    .font(.system(size: 20))
                     .foregroundColor(.white.opacity(0.8))
                 
                 Spacer()
@@ -150,7 +143,7 @@ struct ProfileView: View {
                         .font(.system(size: 22, weight: .bold))
                         .foregroundColor(.white)
                     Text("kg")
-                        .font(.system(size: 18, weight:.semibold))
+                        .font(.system(size: 20, weight:.semibold))
                         .foregroundColor(.white)
                 }
             }
@@ -160,7 +153,7 @@ struct ProfileView: View {
             
             HStack {
                 Text("Max Heart Rate")
-                    .font(.system(size: 17))
+                    .font(.system(size: 20))
                     .foregroundColor(.white.opacity(0.8))
                 
                 Spacer()
@@ -170,18 +163,18 @@ struct ProfileView: View {
                         .font(.system(size: 22, weight: .bold))
                         .foregroundColor(.white)
                     Text("BPM")
-                        .font(.system(size: 18, weight:.semibold))
+                        .font(.system(size: 20, weight:.semibold))
                         .foregroundColor(.white)
                 }
             }
-            .padding(.vertical, 16)
+            .padding(.vertical, 30)
         }
     }
 
 
     private var syncedBadge: some View {
         Text(("Synced from Health App"))
-            .font(.system(size: 16, weight:.semibold))
+            .font(.system(size: 18, weight:.semibold))
             .foregroundColor(.white.opacity(0.9))
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
@@ -192,9 +185,9 @@ struct ProfileView: View {
 #Preview {
     ProfileView(
         viewModel: ProfileViewModel(
-            name: "Xera Kenedy",
-            email: "xeraKen.edit@icoud.com",
+//            name: "Xera Kenedy",
+//            email: "xeraKen.edit@icoud.com",
             healthManager: HealthKitManager()
         )
-    )
+        )
 }

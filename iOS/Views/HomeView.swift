@@ -42,20 +42,20 @@ struct HomeView: View {
                     Text("Activity Log")
                         .font(.system(size: 40, weight: .semibold))
                         .foregroundColor(.white)
-                    Spacer()
-                    VStack {
-                        Image("profile") //need to get the real data by view model on profile
-                             .resizable()
-                             .frame(width: 90, height: 90)
-                             .clipShape(RoundedRectangle(cornerRadius: 15))
-                             .padding(.top,40)
-                        Text(viewModel.name)
-                            .font(.system(size: 24, weight: .semibold))
-                            .foregroundColor(Color(hex: "C35A1D"))
-                    }
-                    .padding(.horizontal, 2)
+//                    Spacer()
+//                    VStack {
+//                        Image("profile") //need to get the real data by view model on profile
+//                             .resizable()
+//                             .frame(width: 90, height: 90)
+//                             .clipShape(RoundedRectangle(cornerRadius: 15))
+//                             .padding(.top,40)
+//                        Text(viewModel.name)
+//                            .font(.system(size: 24, weight: .semibold))
+//                            .foregroundColor(Color(hex: "C35A1D"))
+//                    }
+                    .padding(.horizontal, 5)
                 }
-                .padding(.vertical, 10)
+                .padding(.vertical, 20)
                 LazyVGrid(
                     columns: [
                         GridItem(.flexible(), spacing: 24),
@@ -74,6 +74,7 @@ struct HomeView: View {
                     StatCard(title: "BPM Average", icon: "waveform.path.ecg", value: "\(Int(healthManager.avgHeartRate))")
                     StatCard(title: "Pace Average", icon: "timer", value: healthManager.avgPaceFormatted)
                 }
+                .padding(.vertical, 15)
                 WatchConnectedBadge(isConnected: connectivity.isPaired)
             }
             .padding(.horizontal, 20)
@@ -98,8 +99,8 @@ struct HomeView: View {
     HomeView(
         healthManager: HealthKitManager(),
         viewModel: ProfileViewModel(
-            name: "Xera Kenedy",
-            email: "xeraKen.edit@icoud.com",
+//            name: "Xera Kenedy",
+//            email: "xeraKen.edit@icoud.com",
             healthManager: HealthKitManager()
             )
     )

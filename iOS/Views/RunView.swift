@@ -28,7 +28,9 @@ struct RunView: View {
             VStack(spacing: 24) {
                 Text("Ready to Run")
                     .font(.system(size: 40, weight: .bold))
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .foregroundColor(.white)
+                    .padding(.horizontal, 4)
                     .padding(.top, 60)
                 
                 if step == .selectType {
