@@ -67,6 +67,7 @@ struct RootView: View {
             .tint(Color.secondaryNormal)
             .fullScreenCover(item: $activeRunConfig) { config in
                 ActiveRunView(runType: config.runType, zone: config.zone) {
+                    runSession.resetRun()   
                     activeRunConfig = nil
                     selectedTab = 0
                 }
