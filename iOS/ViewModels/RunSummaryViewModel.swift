@@ -36,6 +36,7 @@ final class RunSummaryViewModel: ObservableObject {
     let duration: TimeInterval
     let averagePace: TimeInterval
     let caloriesBurned: Double
+    let zoneSecondsSpent: [Int: Int]
 
 
     @Published var showNotif: Bool = false
@@ -49,14 +50,15 @@ final class RunSummaryViewModel: ObservableObject {
         distanceKm: Double,
         duration: TimeInterval,
         averagePace: TimeInterval,
-        caloriesBurned: Double
-        
+        caloriesBurned: Double,
+        zoneSecondsSpent: [Int: Int] = [:]
     ) {
         self.runType = runType
         self.distanceKm = distanceKm
         self.duration = duration
         self.averagePace = averagePace
         self.caloriesBurned = caloriesBurned
+        self.zoneSecondsSpent = zoneSecondsSpent
     }
 
     var durationFormatted: String {
@@ -84,7 +86,8 @@ final class RunSummaryViewModel: ObservableObject {
             type: runType,
             distanceKm: distanceKm,
             duration: duration,
-            calories: caloriesBurned
+            calories: caloriesBurned,
+            zoneSecondsSpent: zoneSecondsSpent
         ) { [weak self] success in
             guard let self else { return }
             self.isSaving = false

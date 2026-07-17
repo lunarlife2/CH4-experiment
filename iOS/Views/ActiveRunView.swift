@@ -52,11 +52,29 @@ struct ActiveRunView: View {
         }
         .fullScreenCover(isPresented: $showSummary) {
             RunSummaryView(
-                runType: runType,
-                distanceKm: session.distanceKm,
-                duration: session.duration,
-                averagePace: session.averagePace,
-                caloriesBurned: session.caloriesBurned,
+                runType: session.isRemoteRun
+                ? (connectivity.remoteRunTypeLocation == "indoor" ? .indoor : .outdoor)
+                : session.runType,
+                
+                distanceKm: session.isRemoteRun
+                ? connectivity.remoteDistance
+                : session.distanceKm,
+                
+                duration: session.isRemoteRun
+                ? connectivity.remoteElapsedTime
+                : session.duration,
+                
+                averagePace: session.isRemoteRun
+                ? connectivity.remoteElapsedTime
+                : session.averagePace,
+                
+                caloriesBurned: session.isRemoteRun
+                ? connectivity.remoteCalories
+                : session.caloriesBurned,
+                zoneSecondsSpent: session.isRemoteRun
+                ? [:]
+                : session.zoneSecondsSpent,
+                
                 onDismiss: {
                     var transaction = Transaction()
                     transaction.disablesAnimations = true

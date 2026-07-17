@@ -54,6 +54,7 @@ struct HomeView: View {
 //                            .foregroundColor(Color(hex: "C35A1D"))
 //                    }
                     .padding(.horizontal, 5)
+                    .padding(.top, 60)
                 }
                 .padding(.vertical, 20)
                 LazyVGrid(
@@ -79,6 +80,9 @@ struct HomeView: View {
             }
             .padding(.horizontal, 20)
             .preferredColorScheme(.dark)
+        }
+        .onAppear {
+            healthManager.fetchTodayZoneSeconds()
         }
         .fullScreenCover(item: $activeSheet) { sheet in
             switch sheet {

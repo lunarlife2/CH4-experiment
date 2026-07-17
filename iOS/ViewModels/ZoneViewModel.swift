@@ -39,14 +39,15 @@ final class ZoneViewModel {
     var zones: [ZoneDisplayItem] {
         let computedZones = HeartRateCalculator.calculateZones(age: age)
 
-        let durations = [10, 8, 20, 10, 5]
+        return computedZones.map { model in
+            let seconds = healthManager.todayZoneSeconds[model.zone] ?? 0
+            let minutes = Int((Double(seconds) / 60).rounded())
 
-        return computedZones.enumerated().map { i, model in
-            ZoneDisplayItem(
+            return ZoneDisplayItem(
                 zone: model.zone,
                 min: model.min,
                 max: model.max,
-                durationMinutes: i < durations.count ? durations[i] : 0,
+                durationMinutes: minutes,
                 name: "Zone \(model.zone)",
                 colorName: Self.colorName(forZone: model.zone),
                 color: Self.color(forZone: model.zone),
@@ -88,7 +89,16 @@ final class ZoneViewModel {
     }
     
     var zoneTimeFormatted: String {
-        "12:45"
+        let totalSeconds = healthManager.todayZoneSeconds[currentZoneIndex] ?? 0
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let seconds = totalSeconds % 60
+
+        if hours > 0 {
+            return String(format: "%dh %02dm", hours, minutes)
+        } else {
+            return String(format: "%02d:%02d", minutes, seconds)
+        }
     }
 
     var targetZoneName: String {

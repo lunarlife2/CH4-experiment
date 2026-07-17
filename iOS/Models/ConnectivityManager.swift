@@ -33,6 +33,7 @@ class ConnectivityManager: NSObject, WCSessionDelegate{
     var remoteElapsedTime: TimeInterval = 0
     var remoteTimeInZone: TimeInterval = 0
     var remoteZone: Int = 0
+    var remoteRunTypeLocation: String = "outdoor"
     
     //connect watchos and ios
     var onRemoteWorkoutStateChanged: ((String) -> Void)?

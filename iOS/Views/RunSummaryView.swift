@@ -19,6 +19,7 @@ struct RunSummaryView: View {
         duration: TimeInterval,
         averagePace: TimeInterval,
         caloriesBurned: Double,
+        zoneSecondsSpent: [Int: Int] = [:],
         onDismiss: @escaping () -> Void
     ) {
         _viewModel = StateObject(wrappedValue: RunSummaryViewModel(
@@ -26,7 +27,8 @@ struct RunSummaryView: View {
             distanceKm: distanceKm,
             duration: duration,
             averagePace: averagePace,
-            caloriesBurned: caloriesBurned
+            caloriesBurned: caloriesBurned,
+            zoneSecondsSpent: zoneSecondsSpent 
         ))
         self.onDismiss = onDismiss
     }

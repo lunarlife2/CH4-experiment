@@ -31,7 +31,7 @@ struct ProfileView: View {
                 Text("Health Info")
                     .font(.system(size: 40, weight: .semibold))
                     .foregroundColor(.white)
-                    .padding(.bottom, 20)
+                    .padding(.top, 60)
                 healthInfoList
                 syncedBadge
                 Spacer()

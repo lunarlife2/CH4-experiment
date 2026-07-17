@@ -31,6 +31,10 @@ class HealthKitManager{
     var maxHeartRateBPM: Int?
 	var isAuthorized: Bool = false
     
+    var todayZoneSeconds: [Int: Int] = [1: 0, 2: 0, 3: 0, 4: 0, 5: 0] //sum for each zone
+    
+    static let zoneSecondsMetadataKey = "com.ranup.zoneSecondsSpent" //key metadata to HWorkout
+    
     func requestAuthorization() {
         guard HKHealthStore.isHealthDataAvailable() else { return }
         
@@ -55,6 +59,7 @@ class HealthKitManager{
                 self.fetchTodayCalories()
                 self.fetchAverageHeartRate()
                 self.fetchTodayWorkoutStats()
+                self.fetchTodayZoneSeconds()
                 self.fetchProfileData()
 				Task { @MainActor in
 					self.isAuthorized = true
@@ -69,6 +74,7 @@ class HealthKitManager{
         distanceKm: Double,
         duration: TimeInterval,
         calories: Double,
+        zoneSecondsSpent: [Int: Int] = [:],
         completion: @escaping (Bool) -> Void
     ) {
         let endDate = Date()
@@ -112,15 +118,30 @@ class HealthKitManager{
                     return
                 }
 
-                builder.endCollection(withEnd: endDate) { success, error in
+                //saving the key metada
+                var metadata: [String: Any] = [:]
+                if let data = try? JSONEncoder().encode(zoneSecondsSpent),
+                   let jsonString = String(data: data, encoding: .utf8) {
+                    metadata[HealthKitManager.zoneSecondsMetadataKey] = jsonString
+                }
+
+                builder.addMetadata(metadata) { success, error in
                     guard success else {
                         DispatchQueue.main.async { completion(false) }
                         return
                     }
 
-                    builder.finishWorkout { workout, error in
-                        DispatchQueue.main.async {
-                            completion(workout != nil)
+                    builder.endCollection(withEnd: endDate) { success, error in
+                        guard success else {
+                            DispatchQueue.main.async { completion(false) }
+                            return
+                        }
+
+                        builder.finishWorkout { workout, error in
+                            DispatchQueue.main.async {
+                                completion(workout != nil)
+                                self.fetchTodayZoneSeconds()
+                            }
                         }
                     }
                 }
@@ -238,6 +259,49 @@ class HealthKitManager{
             }
         }
         
+        healthStore.execute(query)
+    }
+    
+    
+    func fetchTodayZoneSeconds() {
+        let workoutType = HKObjectType.workoutType()
+        let predicate = HKQuery.predicateForSamples(
+            withStart: Calendar.current.startOfDay(for: Date()),
+            end: Date()
+        )
+
+        let query = HKSampleQuery(
+            sampleType: workoutType,
+            predicate: predicate,
+            limit: HKObjectQueryNoLimit,
+            sortDescriptors: nil
+        ) { [weak self] _, samples, error in
+            guard let workouts = samples as? [HKWorkout] else {
+                DispatchQueue.main.async {
+                    self?.todayZoneSeconds = [1: 0, 2: 0, 3: 0, 4: 0, 5: 0]
+                }
+                return
+            }
+
+            var totals: [Int: Int] = [1: 0, 2: 0, 3: 0, 4: 0, 5: 0]
+
+            for workout in workouts {
+                guard
+                    let jsonString = workout.metadata?[HealthKitManager.zoneSecondsMetadataKey] as? String,
+                    let data = jsonString.data(using: .utf8),
+                    let perWorkoutZones = try? JSONDecoder().decode([Int: Int].self, from: data)
+                else { continue }
+
+                for (zone, seconds) in perWorkoutZones {
+                    totals[zone, default: 0] += seconds
+                }
+            }
+
+            DispatchQueue.main.async {
+                self?.todayZoneSeconds = totals
+            }
+        }
+
         healthStore.execute(query)
     }
     
